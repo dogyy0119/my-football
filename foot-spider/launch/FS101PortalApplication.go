@@ -2,6 +2,7 @@ package launch
 
 import (
 	"strconv"
+	"tesou.io/platform/foot-parent/foot-core/common/base/service/mysql"
 	"tesou.io/platform/foot-parent/foot-core/common/utils"
 	"tesou.io/platform/foot-parent/foot-core/module/spider/constants"
 	"time"
@@ -16,6 +17,8 @@ func Clean() {
 }
 
 func Spider() {
+
+	mysql.ShowSQL(false)
 	//记录数据爬取时间
 	constants.SpiderDateStr = time.Now().Format("2006-01-02 15:04:05")
 	constants.FullSpiderDateStr = constants.SpiderDateStr
@@ -30,9 +33,12 @@ func Spider() {
 	matchLevel, _ := strconv.Atoi(matchLevelStr)
 	Spider_match(matchLevel)
 	//Spider_baseFace(false)
+
+	// liuhang
 	Spider_asiaLastNew(false)
 	Spider_euroLast()
 	Spider_euroHis()
+
 	//再对欧赔数据不完整的比赛进行两次抓取
 	//Spider_euroHis_Incomplete()
 }
@@ -53,4 +59,3 @@ func Spider_Near() {
 	Spider_euroLast_near()
 	Spider_euroHis_near()
 }
-

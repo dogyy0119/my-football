@@ -23,7 +23,7 @@ type AsiaLastNewProcesser struct {
 	service.AsiaHisService
 	service.AsiaTrackService
 	//是否是单线程
-	SingleThread bool
+	SingleThread       bool
 	MatchLastList      []*pojo.MatchLast
 	Win007idMatchidMap map[string]string
 }
@@ -150,6 +150,7 @@ func (this *AsiaLastNewProcesser) Process(p *page.Page) {
 
 		track := new(entity2.AsiaTrack)
 		track.CompId = last.CompId
+		track.CompName = last.CompName
 		track.MatchId = last.MatchId
 		track.OddDate = last.OddDate
 		track.Sp0 = last.Sp0

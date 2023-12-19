@@ -12,7 +12,7 @@ import (
 	Spider_match()
 }*/
 
-func Before_spider_match(){
+func Before_spider_match() {
 	//抓取前清空当前比较表
 	opsService := new(mysql.DBOpsService)
 	//指定需要清空的数据表
@@ -24,9 +24,11 @@ func Spider_match(matchLevel int) {
 	//开始抓取比赛数据
 	strings := make([]string, 0)
 	//0全部，1一级，2足彩，3竞猜，4单场
-	if matchLevel == 0{
-	 strings = append(strings, "http://m.win007.com/phone/Schedule_0_0.txt")
-	}
+	//if matchLevel == 0 {
+	//	//strings = append(strings, "http://m.win007.com/phone/Sch/edule_0_1.txt")
+	//	//strings = append(strings, "http://m.titan007.com/phone/Schedule_0_3.txt")
+	//}
+	//strings = append(strings, "http://m.titan007.com/phone/Schedule_0_1.txt")
 	//1一级
 	//strings = append(strings, "http://m.win007.com/phone/Schedule_0_1.txt")
 	//2足彩
@@ -35,9 +37,9 @@ func Spider_match(matchLevel int) {
 	//strings = append(strings, "http://m.win007.com/phone/Schedule_0_3.txt")
 	//4单场
 	if matchLevel == 4 {
-		strings = append(strings, "http://m.win007.com/phone/Schedule_0_4.txt")
-	}else{
-		strings = append(strings, "http://m.win007.com/phone/Schedule_0_"+strconv.Itoa(matchLevel)+".txt")
+		strings = append(strings, "http://m.titan007.com/phone/Schedule_0_4.txt")
+	} else {
+		strings = append(strings, "http://m.titan007.com/phone/Schedule_0_"+strconv.Itoa(matchLevel)+".txt")
 	}
 	for _, v := range strings {
 		processer := proc.GetMatchLastProcesser()
@@ -47,4 +49,3 @@ func Spider_match(matchLevel int) {
 		processer.Startup()
 	}
 }
-

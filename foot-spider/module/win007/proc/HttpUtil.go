@@ -132,17 +132,17 @@ func setPostHeader(req *http.Request) {
 	//设置cookies
 	//setCookies(req)
 	//设置head
-	req.Header.Add("Host", "m.win007.com")
+	req.Header.Add("Host", "m.titan007.com")
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0")
 	req.Header.Add("Accept", "*/*")
 	req.Header.Add("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
 	req.Header.Add("Accept-Encoding", "gzip, deflate")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	req.Header.Add("X-Requested-With", "XMLHttpRequest")
-	req.Header.Add("Origin", "http://m.win007.com")
+	req.Header.Add("Origin", "http://m.titan007.com")
 	req.Header.Add("DNT", "1")
 	req.Header.Add("Connection", "keep-alive")
-	req.Header.Add("Referer", "http://m.win007.com/Schedule.htm")
+	req.Header.Add("Referer", "http://m.titan007.com/Schedule.htm")
 	req.Header.Add("Pragma", "no-cache")
 	req.Header.Add("Cache-Control", "no-cache")
 	req.Header.Add("Cookie", "Hm_lvt_3c8ecbfa472e76b0340d7a701a04197e=1581495768,1581867667,1583750448; UM_distinctid=16ec09633ba0-0fd9da98d7e4ec-153f7140-100200-16ec09633bdf9; CNZZDATA1643862=cnzz_eid%3D239082528-1575186565-null%26ntime%3D1583751131; isShowAppAdFb=0; Hm_lpvt_3c8ecbfa472e76b0340d7a701a04197e=1583758442; scrollTop=null")
@@ -150,6 +150,7 @@ func setPostHeader(req *http.Request) {
 
 //因beego会将key小写化,故加上该处理
 var keys = []string{"acw_sc__v3", "acw_sc__v2", "acw_tc", "Hm_lpvt_2fb6939e65e63cfbc1953f152ec2402e", "Hm_lpvt_63b82ac6d9948bad5e14b1398610939a", "Hm_lvt_2fb6939e65e63cfbc1953f152ec2402e", "Hm_lvt_63b82ac6d9948bad5e14b1398610939a", "LWT", "SERVERID"}
+
 //设置cookies
 func setCookies(req *http.Request) {
 	section := utils.GetSection("cookies")
@@ -164,7 +165,7 @@ func setCookies(req *http.Request) {
 		req.AddCookie(&http.Cookie{Name: "Hm_lvt_63b82ac6d9948bad5e14b1398610939a", Value: "1574241706,1574912834,1575529351,1575748957"})
 		req.AddCookie(&http.Cookie{Name: "LWT", Value: "KBjo3NZHBCcMfcnaZ1JXVula6ZKdmthk0DqnddpGOcwxb/d/nr2ULipCnjSsetvzCgwBKwkj7nBLrOAdTnObJULe9q6AAzwXSGYnfRLNE2U="})
 		req.AddCookie(&http.Cookie{Name: "SERVERID", Value: "f35c9b1c268fcc8b58043d36d0dddd26|1575817686|1575815177"})
-		return;
+		return
 	}
 
 	keys := section.Keys()

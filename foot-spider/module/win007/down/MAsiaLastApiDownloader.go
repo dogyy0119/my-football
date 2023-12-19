@@ -107,13 +107,13 @@ func (this *MAsiaLastApiDownloader) changeCharsetEncodingAutoGzipSupport(content
 func (this *MAsiaLastApiDownloader) getHeader() http.Header {
 	//设置head
 	header := http.Header{}
-	header.Add("Host", "m.win007.com")
+	header.Add("Host", "m.titan007.com")
 	header.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0")
 	header.Add("Accept", "*/*")
 	header.Add("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
 	header.Add("Accept-Encoding", "gzip, deflate")
 	header.Add("Connection", "keep-alive")
-	header.Add("Referer", "http://m.win007.com/")
+	header.Add("Referer", "http://m.titan007.com/")
 	header.Add("Cookie", "UM_distinctid=16d41e1fceb179-0546f41e76d7cd-14377840-1aeaa0-16d41e1fcec16b; CNZZDATA1643862=cnzz_eid%3D1697126684-1568763936-%26ntime%3D1573196700")
 	header.Add("Pragma", "no-cache")
 	header.Add("Cache-Control", "no-cache")

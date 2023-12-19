@@ -15,7 +15,8 @@ type AsiaTrack struct {
 	SPanKou float64 `xorm:" comment('s让球') index"`
 
 	//博彩公司id
-	CompId   int `xorm:"unique(CompId_MatchId_OddDate_Num)"`
+	CompId   int    `xorm:"unique(CompId_MatchId_OddDate_Num)"`
+	CompName string `xorm:"varchar(50) index"`
 	//比赛id
 	MatchId string `xorm:"unique(CompId_MatchId_OddDate_Num)  varchar(20)"`
 	//数据时间

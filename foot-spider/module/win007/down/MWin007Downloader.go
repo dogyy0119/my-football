@@ -3,6 +3,7 @@ package down
 import (
 	"bytes"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/andybalholm/brotli"
 	"github.com/bitly/go-simplejson"
 	//    iconv "github.com/djimenez/iconv-go"
 	"github.com/hu17889/go_spider/core/common/mlog"
@@ -78,6 +79,13 @@ func (this *MWin007Downloader) changeCharsetEncodingAuto(contentTypeStr string, 
 	return bodystr
 }
 
+func (this *MWin007Downloader) changeCharsetEncodingAutoBrSupport(contentTypeStr string, sor io.ReadCloser) string {
+
+	bodystr, _ := ioutil.ReadAll(brotli.NewReader(sor))
+	//fmt.Println("liuhang br body:", string(bodystr))
+	return string(bodystr)
+}
+
 func (this *MWin007Downloader) changeCharsetEncodingAutoGzipSupport(contentTypeStr string, sor io.ReadCloser) string {
 	var err error
 	gzipReader, err := gzip.NewReader(sor)
@@ -109,14 +117,14 @@ func (this *MWin007Downloader) changeCharsetEncodingAutoGzipSupport(contentTypeS
 func (this *MWin007Downloader) getHeader() http.Header {
 	//设置head
 	header := http.Header{}
-	header.Add("Host", "m.win007.com")
+	header.Add("Host", "m.titan007.com")
 	header.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0")
 	header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 	header.Add("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
 	header.Add("Accept-Encoding", "gzip, deflate, br")
 	header.Add("DNT", "1")
 	header.Add("Connection", "keep-alive")
-	header.Add("Referer", "http://m.win007.com/")
+	header.Add("Referer", "http://m.titan007.com/")
 	header.Add("Cookie", "Hm_lvt_3c8ecbfa472e76b0340d7a701a04197e=1574622164,1574699164,1574900673,1575112214; Hm_lpvt_3c8ecbfa472e76b0340d7a701a04197e=1575188612")
 	header.Add("Upgrade-Insecure-Requests", "1")
 	header.Add("Pragma", "no-cache")
@@ -213,8 +221,13 @@ func (this *MWin007Downloader) downloadFile(p *page.Page, req *request.Request) 
 	// get converter to utf-8
 	var bodyStr string
 	if resp.Header.Get("Content-Encoding") == "gzip" {
+		//fmt.Println("liuhang Content-Encoding is gzip :", resp.Header.Get("Content-Encoding"))
 		bodyStr = this.changeCharsetEncodingAutoGzipSupport(resp.Header.Get("Content-Type"), resp.Body)
+	} else if resp.Header.Get("Content-Encoding") == "br" {
+		//fmt.Println("liuhang Content-Encoding is br :", resp.Header.Get("Content-Encoding"))
+		bodyStr = this.changeCharsetEncodingAutoBrSupport(resp.Header.Get("Content-Type"), resp.Body)
 	} else {
+		//fmt.Println("liuhang Content-Encoding  is unKnow :", resp.Header.Get("Content-Encoding"))
 		bodyStr = this.changeCharsetEncodingAuto(resp.Header.Get("Content-Type"), resp.Body)
 	}
 	//fmt.Printf("utf-8 body %v \r\n", bodyStr)

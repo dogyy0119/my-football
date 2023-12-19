@@ -26,8 +26,8 @@ type EuroLastProcesser struct {
 	service2.EuroHisService
 	//入参
 	//是否是单线程
-	SingleThread bool
-	MatchLastList      []*pojo.MatchLast
+	SingleThread  bool
+	MatchLastList []*pojo.MatchLast
 	//博彩公司对应的win007id
 	CompWin007Ids      []string
 	Win007idMatchidMap map[string]string
@@ -108,7 +108,7 @@ func (this *EuroLastProcesser) Process(p *page.Page) {
 		return
 	}
 
-	base.Log.Info("hdata_str", hdata_str, "URL:", request.Url)
+	//base.Log.Info("hdata_str", hdata_str, "URL:", request.Url)
 	// 获取script脚本中的，博彩公司信息
 	hdata_str = strings.Replace(hdata_str, ";", "", 1)
 	hdata_str = strings.Replace(hdata_str, "var hData = ", "", 1)
@@ -158,7 +158,7 @@ func (this *EuroLastProcesser) hdata_process(url string, hdata_str string) {
 
 		last := new(entity3.EuroLast)
 		last.MatchId = matchId
-		last.CompId,_ = strconv.Atoi(comp.Id)
+		last.CompId, _ = strconv.Atoi(comp.Id)
 
 		last.Sp3 = v.Hw
 		last.Sp1 = v.So

@@ -3,7 +3,7 @@ module tesou.io/platform/foot-parent/foot-core
 require (
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/astaxie/beego v1.12.0
-	github.com/chanxuehong/wechat v0.0.0-20190521093015-fafb751f9916
+	github.com/chanxuehong/wechat v0.0.0-20190521093015-fafb751f9916 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/go-xorm/core v0.6.3
 	github.com/go-xorm/xorm v0.7.9

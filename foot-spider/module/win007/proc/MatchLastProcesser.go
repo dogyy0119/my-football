@@ -50,7 +50,7 @@ func (this *MatchLastProcesser) Init() {
 
 func (this *MatchLastProcesser) Startup() {
 	if this.MatchlastUrl == "" {
-		this.MatchlastUrl = "http://m.win007.com/phone/Schedule_0_0.txt"
+		this.MatchlastUrl = "http://m.titian007.com/phone/Schedule_0_0.txt"
 	}
 	this.MatchlastUrl = this.MatchlastUrl + "?flesh=" + strconv.FormatFloat(rand.Float64(), 'f', -1, 64)
 	newSpider := spider.NewSpider(this, "MatchLastProcesser")
@@ -69,27 +69,42 @@ func (this *MatchLastProcesser) Process(p *page.Page) {
 	}
 
 	rawText := p.GetBodyStr()
+
+	base.Log.Info("liuhang rawText:", rawText)
+
 	if rawText == "" {
 		base.Log.Error("rawText:为空.url:", request.Url)
 		return
 	}
 
+	currentTime := time.Now()
+	strTime := currentTime.Format("20060102150405")
+
+	rawText = strTime + "$$" + rawText
+
 	rawText_arr := strings.Split(rawText, "$$")
+
+	//base.Log.Info("liuhang rawText_arr  len:", len(rawText_arr))
+	//base.Log.Info("liuhang rawText_arr  0:", rawText_arr[0])
+
 	if len(rawText_arr) < 2 {
 		base.Log.Error("rawText:解析失败,rawTextArr长度小于所必需要的长度2,url:", request.Url, "内容:", rawText_arr)
 		return
 	}
 
-	flag := this.findParamVal(request.Url)
+	//flag := this.findParamVal(request.Url)
+	//base.Log.Info("liuhang  request.Url :", request.Url)
+	//base.Log.Info("liuhang  flag :", flag)
+	//
 	var league_str string
 	var match_str string
-	if flag == "0" {
-		league_str = rawText_arr[0]
-		match_str = rawText_arr[1]
-	} else {
-		league_str = rawText_arr[1]
-		match_str = rawText_arr[2]
-	}
+	//if flag == "0" {
+	//	league_str = rawText_arr[0]
+	//	match_str = rawText_arr[1]
+	//} else {
+	league_str = rawText_arr[1]
+	match_str = rawText_arr[2]
+	//}
 
 	base.Log.Info("日期:TODAY", "联赛信息:", league_str)
 	this.league_process(league_str)
@@ -116,7 +131,7 @@ func (this *MatchLastProcesser) futrueMatch(date string) {
 	req := TomoReq{}
 	req.Date = date
 
-	url := "http://m.win007.com/ChangeDate.ashx?date=" + date
+	url := "http://m.titan007.com/ChangeDate.ashx?date=" + date
 	rawText := GetText(url)
 	//rawText := Post("http://m.win007.com/ChangeDate.ashx", &req)
 
