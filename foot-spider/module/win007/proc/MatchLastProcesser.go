@@ -70,7 +70,7 @@ func (this *MatchLastProcesser) Process(p *page.Page) {
 
 	rawText := p.GetBodyStr()
 
-	base.Log.Info("liuhang rawText:", rawText)
+	//base.Log.Info("liuhang rawText:", rawText)
 
 	if rawText == "" {
 		base.Log.Error("rawText:为空.url:", request.Url)

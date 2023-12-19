@@ -22,7 +22,7 @@ HEAD:
 	input = strings.ToLower(input)
 	switch input {
 	case "exit\n", "exit\r\n", "quit\n", "quit\r\n":
-		break;
+		break
 	case "\n", "\r\n":
 		goto HEAD
 	case "init\n", "init\r\n":
@@ -34,6 +34,7 @@ HEAD:
 		goto HEAD
 	case "analy\n", "analy\r\n":
 		launch2.Analy(false)
+		//launch2.Analy_Near()
 		goto HEAD
 	default:
 		goto HEAD

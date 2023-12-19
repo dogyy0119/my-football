@@ -8,7 +8,7 @@ import (
 
 var (
 	maxLetBall   = 1.0
-	showSql = false
+	showSql      = false
 	printOddData = false
 )
 
@@ -54,5 +54,10 @@ func Analy_Near() {
 	e1.MaxLetBall = maxLetBall
 	e1.PrintOddData = printOddData
 	e1.Analy_Near()
-	mysql.ShowSQL(true)
+	mysql.ShowSQL(showSql)
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("---------------处理结果--------------")
+	base.Log.Info("---------------------------------------------------------------")
+	analyService := new(service.AnalyService)
+	analyService.ModifyResult()
 }
