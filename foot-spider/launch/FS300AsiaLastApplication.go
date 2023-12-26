@@ -13,7 +13,7 @@ import (
 	Spider_asiaLast()
 }*/
 
-func Before_spider_asiaLast(){
+func Before_spider_asiaLast() {
 	//抓取前清空当前比较表
 	opsService := new(mysql.DBOpsService)
 	//指定需要清空的数据表
@@ -34,13 +34,24 @@ func Spider_asiaLast() {
 func Spider_asiaLastNew(spiderAll bool) {
 	matchLastService := new(service2.MatchLastService)
 	var matchLasts []*pojo.MatchLast
-	if spiderAll{
+	if spiderAll {
 		matchLasts = matchLastService.FindAll()
-	}else{
+	} else {
 		matchLasts = matchLastService.FindNotFinished()
 	}
 
 	processer := proc.GetAsiaLastNewProcesser()
+	processer.MatchLastList = matchLasts
+	processer.SingleThread = true
+	processer.Startup()
+}
+
+func Spider_asia_not_start() {
+	matchLastService := new(service2.MatchLastService)
+	var matchLasts []*pojo.MatchLast
+	matchLasts = matchLastService.FindNotStart()
+
+	processer := proc.GetAsiaAllTrackProcesser()
 	processer.MatchLastList = matchLasts
 	processer.SingleThread = true
 	processer.Startup()

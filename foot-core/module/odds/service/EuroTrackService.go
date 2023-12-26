@@ -12,7 +12,7 @@ type EuroTrackService struct {
 }
 
 func (this *EuroTrackService) Exist(v *pojo.EuroTrack) (string, bool) {
-	temp := &pojo.EuroTrack{MatchId: v.MatchId, CompId: v.CompId, OddDate: v.OddDate,Num:v.Num}
+	temp := &pojo.EuroTrack{MatchId: v.MatchId, CompId: v.CompId, OddDate: v.OddDate, Num: v.Num}
 	var id string
 	exist, err := mysql.GetEngine().Get(temp)
 	if err != nil {
@@ -24,11 +24,10 @@ func (this *EuroTrackService) Exist(v *pojo.EuroTrack) (string, bool) {
 	return id, exist
 }
 
-
 //根据比赛ID查找欧赔
 func (this *EuroTrackService) FindByMatchId(matchId string) []*pojo.EuroTrack {
 	dataList := make([]*pojo.EuroTrack, 0)
-	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(dataList)
+	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindByMatchId:", err)
 	}

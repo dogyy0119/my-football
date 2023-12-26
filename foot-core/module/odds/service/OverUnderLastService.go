@@ -28,7 +28,7 @@ func (this *OverUnderLastService) Exist(v *pojo.OverUnderLast) (string, bool) {
 //根据比赛ID查找亚赔
 func (this *OverUnderLastService) FindByMatchId(matchId string) []*pojo.OverUnderLast {
 	dataList := make([]*pojo.OverUnderLast, 0)
-	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(dataList)
+	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindByMatchId:", err)
 	}

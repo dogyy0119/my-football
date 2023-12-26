@@ -23,9 +23,35 @@ func (this *MatchLastService) Exist(v *pojo.MatchLast) bool {
 	return has
 }
 
+func (this *MatchLastService) FindByMatchId(Id string) []*pojo.MatchLast {
+	dataList := make([]*pojo.MatchLast, 0)                         // 初始化和分配内存空间
+	err := mysql.GetEngine().Where(" Id = ? ", Id).Find(&dataList) // 将 dataList 的地址传递给 Find 方法
+	if err != nil {
+		base.Log.Error("FindById:", err)
+	}
+	return dataList
+}
+
 func (this *MatchLastService) FindAll() []*pojo.MatchLast {
 	dataList := make([]*pojo.MatchLast, 0)
 	mysql.GetEngine().OrderBy("MatchDate").Find(&dataList)
+	return dataList
+}
+
+func (this *MatchLastService) FindReady() []*pojo.MatchLast {
+	sql_build_1 := `
+SELECT 
+  la.* 
+FROM
+  foot.t_match_last la 
+WHERE DATE_ADD(la.MatchDate, INTERVAL 5 MINUTE) >= NOW() 
+  AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 30 MINUTE)
+	`
+	//结果值
+	dataList := make([]*pojo.MatchLast, 0)
+	//执行查询
+	this.FindBySQL(sql_build_1, &dataList)
+
 	return dataList
 }
 
@@ -38,7 +64,7 @@ SELECT
   la.* 
 FROM
   foot.t_match_last la 
-WHERE DATE_ADD(la.MatchDate, INTERVAL 6 MINUTE) >= NOW() 
+WHERE DATE_ADD(la.MatchDate, INTERVAL 5 MINUTE) >= NOW() 
   AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 30 MINUTE)
 	`
 	sql_build_2 := `
@@ -83,6 +109,28 @@ FROM
 WHERE la.LeagueId = l.Id 
   AND la.MatchDate > DATE_SUB(NOW(), INTERVAL 24 HOUR)
  ORDER BY la.MatchDate ASC
+	`
+	//结果值
+	dataList := make([]*pojo.MatchLast, 0)
+	//执行查询
+	this.FindBySQL(sql_build, &dataList)
+	return dataList
+}
+
+/**
+查找未开始的比赛
+*/
+func (this *MatchLastService) FindNotStart() []*pojo.MatchLast {
+	sql_build := `
+SELECT 
+  la.* 
+FROM
+  foot.t_match_his la,
+  foot.t_league l 
+WHERE la.LeagueId = l.Id 
+  AND la.MatchDate > NOW()
+  AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 1 DAY)
+ORDER BY la.MatchDate ASC
 	`
 	//结果值
 	dataList := make([]*pojo.MatchLast, 0)

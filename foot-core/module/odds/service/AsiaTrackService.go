@@ -12,7 +12,7 @@ type AsiaTrackService struct {
 }
 
 func (this *AsiaTrackService) Exist(v *pojo.AsiaTrack) (string, bool) {
-	temp := &pojo.AsiaTrack{MatchId: v.MatchId, CompId: v.CompId, OddDate: v.OddDate,Num:v.Num}
+	temp := &pojo.AsiaTrack{MatchId: v.MatchId, CompId: v.CompId, OddDate: v.OddDate, Num: v.Num}
 	var id string
 	exist, err := mysql.GetEngine().Get(temp)
 	if err != nil {
@@ -27,7 +27,7 @@ func (this *AsiaTrackService) Exist(v *pojo.AsiaTrack) (string, bool) {
 //根据比赛ID查找亚赔
 func (this *AsiaTrackService) FindByMatchId(matchId string) []*pojo.AsiaTrack {
 	dataList := make([]*pojo.AsiaTrack, 0)
-	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(dataList)
+	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindByMatchId:", err)
 	}

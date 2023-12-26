@@ -20,7 +20,7 @@ import (
 	"time"
 )
 
-type AnalyInterface interface {
+type MyAnalyInterface interface {
 	ModelName() string
 
 	AnalyTest()
@@ -29,11 +29,12 @@ type AnalyInterface interface {
 
 	Analy(analyAll bool)
 
-	analyStub(v *entity2.MatchLast) (int, *entity5.AnalyResult)
+	analyStub(v *entity2.MatchLast) (int, *entity5.AnalyNewResult)
 }
 
-type AnalyService struct {
+type MyAnalyService struct {
 	mysql.BaseService
+	service.AsiaAllTrackService
 	service.EuroHisService
 	service.EuroTrackService
 	service.AsiaHisService
@@ -44,26 +45,26 @@ type AnalyService struct {
 	PrintOddData bool
 }
 
-func (this *AnalyService) Find(matchId string, alFlag string) *entity5.AnalyResult {
-	data := entity5.AnalyResult{MatchId: matchId, AlFlag: alFlag}
+func (this *MyAnalyService) Find(matchId string, alFlag string) *entity5.AnalyNewResult {
+	data := entity5.AnalyNewResult{MatchId: matchId, AlFlag: alFlag}
 	mysql.GetEngine().Get(&data)
 	return &data
 }
 
-func (this *AnalyService) FindAll() []*entity5.AnalyResult {
-	dataList := make([]*entity5.AnalyResult, 0)
+func (this *MyAnalyService) FindAll() []*entity5.AnalyNewResult {
+	dataList := make([]*entity5.AnalyNewResult, 0)
 	mysql.GetEngine().OrderBy("CreateTime Desc").Find(&dataList)
 	return dataList
 }
 
-func (this *AnalyService) AnalyTest(thiz AnalyInterface) {
+func (this *MyAnalyService) AnalyTest(thiz MyAnalyInterface) {
 	var currentPage, pageSize int64 = 1, 10000
 	var page *pojo.Page
 	page = new(pojo.Page)
 	page.PageSize = pageSize
 	page.CurPage = currentPage
 	matchList := make([]*entity2.MatchLast, 0)
-	err := this.MatchHisService.PageSql("SELECT mh.* FROM foot.t_match_his mh WHERE mh.`MatchDate` > '2020-03-01 00:00:00' AND mh.`MatchDate` < '2020-04-30 00:00:00'", page, &matchList)
+	err := this.MatchHisService.PageSql("SELECT mh.* FROM foot.t_match_his mh WHERE mh.`MatchDate` > '2023-12-01 00:00:00' AND mh.`MatchDate` < '2024-01-30 00:00:00'", page, &matchList)
 	if nil != err {
 		base.Log.Error(err)
 		return
@@ -71,49 +72,22 @@ func (this *AnalyService) AnalyTest(thiz AnalyInterface) {
 	this.Analy_Process(matchList, thiz, false)
 }
 
-func (this *AnalyService) Analy(analyAll bool, thiz AnalyInterface) {
-	var matchList []*entity2.MatchLast
-	if analyAll {
-		var currentPage, pageSize int64 = 1, 1000
-		var page *pojo.Page
-		page = new(pojo.Page)
-		page.PageSize = pageSize
-		page.CurPage = currentPage
-		matchList = make([]*entity2.MatchLast, 0)
-		err := this.MatchHisService.PageSql("select mh.* from foot.t_match_his mh ", page, &matchList)
-		if nil != err {
-			base.Log.Error(err)
-			return
-		}
-		go this.Analy_Process(matchList, thiz, true)
-		for currentPage <= page.TotalPage {
-			currentPage++
-			page = new(pojo.Page)
-			page.PageSize = pageSize
-			page.CurPage = currentPage
-			matchList = make([]*entity2.MatchLast, 0)
-			err := this.MatchHisService.PageSql("select mh.* from foot.t_match_his mh", page, &matchList)
-			if nil != err {
-				base.Log.Error(err)
-				continue
-			}
-			go this.Analy_Process(matchList, thiz, true)
-		}
-	} else {
-		matchList = this.MatchLastService.FindNotFinished()
-		this.Analy_Process(matchList, thiz, true)
-	}
+func (this *MyAnalyService) Analy(analyAll bool, thiz MyAnalyInterface) {
+
+	matchList := this.MatchLastService.FindNotFinished()
+	this.Analy_Process(matchList, thiz, true)
+
 }
 
-func (this *AnalyService) Analy_Near(thiz AnalyInterface) {
-	matchList := this.MatchLastService.FindNear()
+func (this *MyAnalyService) Analy_Near(thiz MyAnalyInterface) {
+	matchList := this.MatchLastService.FindReady()
 	this.Analy_Process(matchList, thiz, true)
 }
 
 /**
 汇总结果并输出，且持久化
 */
-func (this *AnalyService) Analy_Process(matchList []*entity2.MatchLast, thiz AnalyInterface, persisted bool) {
+func (this *MyAnalyService) Analy_Process(matchList []*entity2.MatchLast, thiz MyAnalyInterface, persisted bool) {
 	hit_count_str := utils.GetVal(constants.SECTION_NAME, "hit_count")
 	hit_count, _ := strconv.Atoi(hit_count_str)
 	data_list_slice := make([]interface{}, 0)
@@ -166,8 +140,8 @@ func (this *AnalyService) Analy_Process(matchList []*entity2.MatchLast, thiz Ana
 	base.Log.Info("------------------")
 	base.Log.Info("------------------")
 	base.Log.Info("------------------")
-	base.Log.Info("GOOOO场次:", rightCount)
-	base.Log.Info("X0000场次:", errorCount)
+	base.Log.Info("GOO场次:", rightCount)
+	base.Log.Info("X00场次:", errorCount)
 	base.Log.Info("------------------")
 
 	if persisted {
@@ -179,7 +153,7 @@ func (this *AnalyService) Analy_Process(matchList []*entity2.MatchLast, thiz Ana
 /**
 C1使用的检查是否存在其他模型存在互斥选项
 */
-func (this *AnalyService) FindOtherAlFlag(matchId string, alFlag string, preResult int) bool {
+func (this *MyAnalyService) FindOtherAlFlag(matchId string, alFlag string, preResult int) bool {
 	sql_build := `
 SELECT 
   ar.* 
@@ -202,7 +176,7 @@ WHERE ar.MatchId = ?
 /**
 更新结果
 */
-func (this *AnalyService) ModifyAllResult() {
+func (this *MyAnalyService) ModifyAllResult() {
 	sql_build := `
 SELECT 
   ar.* 
@@ -210,7 +184,7 @@ FROM
   foot.t_analy_result ar 
      `
 	//结果值
-	entitys := make([]*entity5.AnalyResult, 0)
+	entitys := make([]*entity5.AnalyNewResult, 0)
 	//执行查询
 	this.FindBySQL(sql_build, &entitys)
 
@@ -249,7 +223,7 @@ FROM
 /**
 更新结果
 */
-func (this *AnalyService) ModifyResult() {
+func (this *MyAnalyService) ModifyResult() {
 	sql_build := `
 SELECT 
   ar.* 
@@ -258,7 +232,7 @@ FROM
 WHERE DATE_ADD(ar.MatchDate, INTERVAL 6 HOUR) > NOW()
      `
 	//结果值
-	entitys := make([]*entity5.AnalyResult, 0)
+	entitys := make([]*entity5.AnalyNewResult, 0)
 	//执行查询
 	this.FindBySQL(sql_build, &entitys)
 
@@ -305,7 +279,7 @@ WHERE DATE_ADD(ar.MatchDate, INTERVAL 6 HOUR) > NOW()
 4.alName 算法名称，默认为Euro81_616Service ;
 5.option 3(只筛选主队),1(只筛选平局),0(只筛选客队)选项
 */
-func (this *AnalyService) List(alName string, hitCount int, option int) []*vo.AnalyResultVO {
+func (this *MyAnalyService) List(alName string, hitCount int, option int) []*vo.AnalyResultVO {
 	sql_build := `
 SELECT 
   l.Name as LeagueName,
@@ -342,7 +316,7 @@ WHERE ml.LeagueId = l.Id
 }
 
 //测试加载数据
-func (this *AnalyService) LoadByMatchId(matchId string) []*entity5.AnalyResult {
+func (this *MyAnalyService) LoadByMatchId(matchId string) []*entity5.AnalyNewResult {
 	sql_build := `
 SELECT 
   ml.*,
@@ -358,14 +332,14 @@ WHERE ml.id = el.matchid
 	`
 	sql_build += "  AND ml.id = '" + matchId + "' "
 	//结果值
-	entitys := make([]*entity5.AnalyResult, 0)
+	entitys := make([]*entity5.AnalyNewResult, 0)
 	//执行查询
 	this.FindBySQL(sql_build, &entitys)
 	return entitys
 }
 
 //测试加载数据
-func (this *AnalyService) DelTovoidData() {
+func (this *MyAnalyService) DelTovoidData() {
 	//E2 C1 不可删除
 	sql_build := `
 DELETE FROM foot.t_analy_result  WHERE AlFlag IN ("E1","Q1") AND TOVoid IS TRUE
@@ -376,7 +350,7 @@ DELETE FROM foot.t_analy_result  WHERE AlFlag IN ("E1","Q1") AND TOVoid IS TRUE
 	}
 }
 
-func (this *AnalyService) IsRight2Option(last *entity2.MatchLast, analy *entity5.AnalyResult) string {
+func (this *MyAnalyService) IsRight2Option(last *entity2.MatchLast, analy *entity5.AnalyNewResult) string {
 	if strings.EqualFold(analy.MatchId, "1826976") {
 		fmt.Println("--")
 	}
@@ -413,7 +387,6 @@ func (this *AnalyService) IsRight2Option(last *entity2.MatchLast, analy *entity5
 	} else {
 		resultFlag = constants.UNHIT
 	}
-
 	analy.Result = resultFlag
 	league := this.LeagueService.FindById(last.LeagueId)
 	if this.IsCupMatch(league.Name) {
@@ -425,18 +398,19 @@ func (this *AnalyService) IsRight2Option(last *entity2.MatchLast, analy *entity5
 
 	//打印数据
 	matchDateStr := last.MatchDate.Format("2006-01-02 15:04:05")
+	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
 	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
 	return resultFlag
 }
 
-func (this *AnalyService) IsCupMatch(leagueName string) bool {
+func (this *MyAnalyService) IsCupMatch(leagueName string) bool {
 	if strings.Contains(leagueName, "杯") || strings.Contains(leagueName, "锦") {
 		return true
 	}
 	return false
 }
 
-func (this *AnalyService) IsRight(last *entity2.MatchLast, analy *entity5.AnalyResult) string {
+func (this *MyAnalyService) IsRight(last *entity2.MatchLast, analy *entity5.AnalyNewResult) string {
 	//比赛结果
 	globalResult := this.ActualResult(last, analy)
 	var resultFlag string
@@ -463,14 +437,67 @@ func (this *AnalyService) IsRight(last *entity2.MatchLast, analy *entity5.AnalyR
 
 	//打印数据
 	matchDate := last.MatchDate.Format("2006-01-02 15:04:05")
-	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+	base.Log.Info("比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+	return resultFlag
+}
+
+func (this *MyAnalyService) IsNewRight2Option(last *entity2.MatchLast, analy *entity5.AnalyNewResult) string {
+	if strings.EqualFold(analy.MatchId, "1826976") {
+		fmt.Println("--")
+	}
+	//比赛结果
+	var globalResult int
+	if utils.GetHourDiffer(time.Now(), last.MatchDate) < 2 {
+		//比赛未结束
+		globalResult = -1
+	} else {
+		guestGoals := float64(last.GuestTeamGoals) + analy.LetBall
+		//fmt.Println("liuhag  guestGoals:", guestGoals)
+		//fmt.Println("liuhag  analy.LetBall:", analy.LetBall)
+		//fmt.Println("liuhag  last.GuestTeamGoals :", last.GuestTeamGoals)
+		//fmt.Println("liuhag  last.MainTeamGoals :", last.MainTeamGoals)
+		if float64(last.MainTeamGoals) > guestGoals {
+			globalResult = 3
+		} else if float64(last.MainTeamGoals) < guestGoals {
+			globalResult = 0
+		} else {
+			globalResult = 1
+		}
+		//fmt.Println("liuhag  globalResult :", globalResult)
+
+	}
+	var resultFlag string
+	if analy.PreResult == -1 {
+		resultFlag = constants.UNKNOW
+	} else if globalResult == -1 {
+		resultFlag = constants.UNCERTAIN
+	} else if globalResult == analy.PreResult {
+		resultFlag = constants.HIT
+	} else if globalResult == 1 {
+		resultFlag = constants.WALKING_PLATE
+	} else {
+		resultFlag = constants.UNHIT
+	}
+	analy.Result = resultFlag
+	league := this.LeagueService.FindById(last.LeagueId)
+	if this.IsCupMatch(league.Name) {
+		analy.TOVoid = true
+		analy.TOVoidDesc = "杯赛"
+	} else {
+		analy.TOVoidDesc = ""
+	}
+
+	//打印数据
+	matchDateStr := last.MatchDate.Format("2006-01-02 15:04:05")
+	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
+	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
 	return resultFlag
 }
 
 /**
 比赛的实际结果计算
 */
-func (this *AnalyService) ActualResult(last *entity2.MatchLast, analy *entity5.AnalyResult) int {
+func (this *MyAnalyService) ActualResult(last *entity2.MatchLast, analy *entity5.AnalyNewResult) int {
 	var result int
 	if utils.GetHourDiffer(time.Now(), last.MatchDate) < 2 {
 		//比赛未结束
@@ -501,7 +528,7 @@ func (this *AnalyService) ActualResult(last *entity2.MatchLast, analy *entity5.A
 /**
 是否是主队让球，反之是客队让球
 */
-func (this *AnalyService) mainLetball(a18Bet *entity3.AsiaHis) bool {
+func (this *MyAnalyService) mainLetball(a18Bet *entity3.AsiaHis) bool {
 	mainLetball := true
 	if a18Bet.EPanKou > 0 {
 		mainLetball = true
@@ -522,7 +549,7 @@ func (this *AnalyService) mainLetball(a18Bet *entity3.AsiaHis) bool {
 /**
 1.欧赔是主降还是主升 主降为true
 */
-func (this *AnalyService) EuroDirection(e81 *entity3.EuroHis, e616 *entity3.EuroHis) int {
+func (this *MyAnalyService) EuroDirection(e81 *entity3.EuroHis, e616 *entity3.EuroHis) int {
 	//val_diff := 0.3
 	//e81_3_diff := math.Abs(e81.Ep3 - e81.Sp3)
 	//e81_0_diff := math.Abs(e81.Ep0 - e81.Sp0)
@@ -545,7 +572,7 @@ func (this *AnalyService) EuroDirection(e81 *entity3.EuroHis, e616 *entity3.Euro
 /**
 2.亚赔是主降还是主升 主降为true
 */
-func (this *AnalyService) AsiaDirectionMulti(matchId string) int {
+func (this *MyAnalyService) AsiaDirectionMulti(matchId string) int {
 	aList := this.AsiaHisService.FindByMatchIdCompId(matchId, "Crown", "明陞", "金宝博", "12bet", "盈禾", "18Bet")
 	if len(aList) < 3 {
 		return -1
@@ -573,7 +600,7 @@ func (this *AnalyService) AsiaDirectionMulti(matchId string) int {
 /**
 2.亚赔是主降还是主升 主降为true
 */
-func (this *AnalyService) AsiaDirection(ahis *entity3.AsiaHis) int {
+func (this *MyAnalyService) AsiaDirection(ahis *entity3.AsiaHis) int {
 	mark := -1
 	slb := ahis.SPanKou
 	elb := ahis.EPanKou
@@ -607,12 +634,4 @@ func (this *AnalyService) AsiaDirection(ahis *entity3.AsiaHis) int {
 		}
 	}
 	return mark
-}
-
-/**
-float64保留两位小数
-*/
-func Decimal(value float64) float64 {
-	value, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", value), 64)
-	return value
 }

@@ -54,18 +54,18 @@ func (this *DBOpsService) SyncTableStruct() {
 	}
 
 	//赔率相关表
-	err = engine.Sync2(new(entity2.Betfair),new(entity2.EuroLast), new(entity2.EuroHis), new(entity2.EuroTrack), new(entity2.AsiaLast), new(entity2.AsiaHis), new(entity2.AsiaTrack), new(entity2.OverUnderLast), new(entity2.OverUnderHis), new(entity2.OverUnderTrack))
+	err = engine.Sync2(new(entity2.Betfair), new(entity2.EuroLast), new(entity2.EuroHis), new(entity2.EuroTrack), new(entity2.AsiaLast), new(entity2.AsiaHis), new(entity2.AsiaTrack), new(entity2.AsiaAllTrack), new(entity2.OverUnderLast), new(entity2.OverUnderHis), new(entity2.OverUnderTrack))
 	if nil != err {
 		base.Log.Error(err.Error())
 	}
 
 	//波菜公司，联赛其他数据表
-	err = engine.Sync2(new(entity3.Comp), new(entity3.CompAsia),new(entity3.League), new(entity3.LeagueSeason), new(entity3.LeagueSub), new(entity3.Team))
+	err = engine.Sync2(new(entity3.Comp), new(entity3.CompAsia), new(entity3.League), new(entity3.LeagueSeason), new(entity3.LeagueSub), new(entity3.Team))
 	if nil != err {
 		base.Log.Error(err.Error())
 	}
 	//分析的结果集表
-	err = engine.Sync2(new(entity4.AnalyResult))
+	err = engine.Sync2(new(entity4.AnalyResult), new(entity4.AnalyNewResult))
 	if nil != err {
 		base.Log.Error(err.Error())
 	}

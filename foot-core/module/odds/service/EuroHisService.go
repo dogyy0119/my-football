@@ -30,7 +30,7 @@ func (this *EuroHisService) Exist(v *pojo.EuroHis) (string, bool) {
 //根据比赛ID查找欧赔
 func (this *EuroHisService) FindByMatchId(matchId string) []*pojo.EuroHis {
 	dataList := make([]*pojo.EuroHis, 0)
-	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(dataList)
+	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindByMatchId:", err)
 	}

@@ -28,7 +28,7 @@ func (this *AsiaLastService) Exist(v *pojo.AsiaLast) (string, bool) {
 //根据比赛ID查找亚赔
 func (this *AsiaLastService) FindByMatchId(matchId string) []*pojo.AsiaLast {
 	dataList := make([]*pojo.AsiaLast, 0)
-	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(dataList)
+	err := mysql.GetEngine().Where(" MatchId = ? ", matchId).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindByMatchId:", err)
 	}
