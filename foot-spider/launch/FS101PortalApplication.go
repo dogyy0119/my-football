@@ -1,6 +1,7 @@
 package launch
 
 import (
+	"fmt"
 	"strconv"
 	"tesou.io/platform/foot-parent/foot-core/common/base/service/mysql"
 	"tesou.io/platform/foot-parent/foot-core/common/utils"
@@ -27,14 +28,14 @@ func Spider() {
 	//执行抓取亚赔数据
 	//执行抓取欧赔历史
 	matchLevelStr := utils.GetVal("spider", "match_level")
-	if len(matchLevelStr) <= 0 {
-		matchLevelStr = "4"
-	}
+	//if len(matchLevelStr) <= 0 {
+	//	matchLevelStr = "4"
+	//}
+	fmt.Println(matchLevelStr)
 	matchLevel, _ := strconv.Atoi(matchLevelStr)
 	Spider_match(matchLevel)
-	//Spider_baseFace(false)
+	Spider_baseFace(false)
 
-	// liuhang
 	/**
 	根据比赛id,抓取亚赔数据，类型为 text，解析text获取赔率信息。
 	更新亚赔last his 表数据，由于exist 进行find 时候这两个表进加入了 比赛id 和 菠菜id,故仅仅保留最后一条数据。

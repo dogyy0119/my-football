@@ -43,7 +43,7 @@ func (this *MatchLastService) FindReady() []*pojo.MatchLast {
 SELECT 
   la.* 
 FROM
-  foot.t_match_last la 
+  t_match_last la 
 WHERE DATE_ADD(la.MatchDate, INTERVAL 5 MINUTE) >= NOW() 
   AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 30 MINUTE)
 	`
@@ -63,7 +63,7 @@ func (this *MatchLastService) FindNear() []*pojo.MatchLast {
 SELECT 
   la.* 
 FROM
-  foot.t_match_last la 
+  t_match_last la 
 WHERE DATE_ADD(la.MatchDate, INTERVAL 5 MINUTE) >= NOW() 
   AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 30 MINUTE)
 	`
@@ -71,8 +71,8 @@ WHERE DATE_ADD(la.MatchDate, INTERVAL 5 MINUTE) >= NOW()
 SELECT DISTINCT 
   la.* 
 FROM
-  foot.t_match_last la,
-  foot.t_analy_result ar 
+  t_match_last la,
+  t_analy_result ar 
 WHERE la.Id = ar.MatchId 
   AND DATE_ADD(la.MatchDate, INTERVAL 6 MINUTE) >= NOW() 
   AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 30 MINUTE)
@@ -100,16 +100,14 @@ WHERE la.Id = ar.MatchId
 查找未结束的比赛
 */
 func (this *MatchLastService) FindNotFinished() []*pojo.MatchLast {
-	sql_build := `
-SELECT 
-  la.* 
+	sql_build := `SELECT 
+    la.* 
 FROM
-  foot.t_match_his la,
-  foot.t_league l 
+    t_match_his la,
+    t_league l 
 WHERE la.LeagueId = l.Id 
-  AND la.MatchDate > DATE_SUB(NOW(), INTERVAL 24 HOUR)
- ORDER BY la.MatchDate ASC
-	`
+    AND la.MatchDate > DATE_SUB(NOW(), INTERVAL 24 HOUR)
+ORDER BY la.MatchDate ASC`
 	//结果值
 	dataList := make([]*pojo.MatchLast, 0)
 	//执行查询
@@ -125,8 +123,8 @@ func (this *MatchLastService) FindNotStart() []*pojo.MatchLast {
 SELECT 
   la.* 
 FROM
-  foot.t_match_his la,
-  foot.t_league l 
+  t_match_his la,
+  t_league l 
 WHERE la.LeagueId = l.Id 
   AND la.MatchDate > NOW()
   AND la.MatchDate <= DATE_ADD(NOW(), INTERVAL 1 DAY)
@@ -147,8 +145,8 @@ func (this *MatchLastService) FindEuroIncomplete(count int) []*pojo.MatchLast {
 SELECT 
   la.* 
 FROM
-  foot.t_euro_last l,
-  foot.t_match_last la 
+  t_euro_last l,
+  t_match_last la 
 WHERE l.MatchId = la.Id 
 GROUP BY l.MatchId
 	`

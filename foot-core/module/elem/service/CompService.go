@@ -21,7 +21,7 @@ func (this *CompService) Exist(v *pojo.Comp) bool {
 
 func (this *CompService) FindEuroIds() []string {
 	sql_build_1 := ` 
-		SELECT tc.* FROM foot.t_comp tc WHERE tc.type = 1 
+		SELECT tc.* FROM t_comp tc WHERE tc.type = 1 
 	`
 	//结果值
 	dataList := make([]*pojo.Comp, 0)

@@ -78,7 +78,7 @@ func (this *AsiaLastNewProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMAsiaLastApiDownloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetThreadnum(3).Run()
 
 }
 
@@ -114,6 +114,7 @@ func (this *AsiaLastNewProcesser) Process(p *page.Page) {
 		last := new(entity2.AsiaLast)
 		last.MatchId = matchId
 		last.CompId = e.CompanyID
+		//last.CompNameEN = e.NameEn
 		last.CompName = e.NameCn
 
 		odd := e.Details[0]

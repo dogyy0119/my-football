@@ -4,12 +4,12 @@ const (
 	SECTION_NAME = "analy"
 	/**
 	默认参考有亚赔公司-- many,多数，Bet365,澳门,18Bet
-	 */
+	*/
 	DEFAULT_REFER_ASIA = "many"
 	/**
 	C1算法,参考的亚赔公司-- Bet365,澳门,18Bet,10BET,12bet
-	 */
-	C1_REFER_ASIA = "18Bet"
+	*/
+	C1_REFER_ASIA = "42"
 )
 
 const (
@@ -29,5 +29,5 @@ const (
 	UNCERTAIN = "待定"
 	//走盘
 	WALKING_PLATE = "走盘"
-	UNKNOW = "未知"
+	UNKNOW        = "未知"
 )

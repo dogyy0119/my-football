@@ -42,7 +42,7 @@ func Spider_asiaLastNew(spiderAll bool) {
 
 	processer := proc.GetAsiaLastNewProcesser()
 	processer.MatchLastList = matchLasts
-	processer.SingleThread = true
+	processer.SingleThread = false
 	processer.Startup()
 }
 

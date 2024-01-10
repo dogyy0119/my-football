@@ -12,9 +12,14 @@ type BFFutureEvent struct {
 	//比赛id
 	MatchId string `xorm:"comment('比赛ID')  unique(MatchId_TeamId_EventMatchDate) index"`
 	/**
+	 * 队伍Id
+	 */
+	TeamId string `xorm:" comment('队伍Id') unique(MatchId_TeamId_EventMatchDate) index"`
+
+	/**
 	 * 队伍名称
 	 */
-	TeamId string `xorm:" comment('队伍名称') unique(MatchId_TeamId_EventMatchDate) index"`
+	TeamName string `xorm:" comment('队伍名称')  index"`
 	/**
 	 * 比赛时间
 	 */
@@ -23,14 +28,28 @@ type BFFutureEvent struct {
 	 * 联赛Id
 	 */
 	EventLeagueId string `xorm:" comment('联赛Id') index"`
+
 	/**
-	 * 主队id,目前为主队名称
+	 * 联赛名称
 	 */
-	EventMainTeamId string `xorm:"  comment('主队id,目前为主队名称') index "`
+	EventLeagueName string `xorm:" comment('联赛名称') index"`
 	/**
-	 * 客队id,目前为客队名称
+	 * 主队id,
 	 */
-	EventGuestTeamId string `xorm:" comment('客队id,目前为客队名称') index "`
+	EventMainTeamId int `xorm:"  comment('主队id') index "`
+	/**
+	 * 客队id,
+	 */
+	EventGuestTeamId int `xorm:" comment('客队id') index "`
+
+	/**
+	 * 主队名称
+	 */
+	EventMainTeamName string `xorm:"  comment('主队名称') index "`
+	/**
+	 * 客队名称
+	 */
+	EventGuestTeamName string `xorm:" comment('客队名称') index "`
 	/**
 	间隔天数
 	*/

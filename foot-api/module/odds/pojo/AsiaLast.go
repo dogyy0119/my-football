@@ -10,8 +10,10 @@ import (
 type AsiaLast struct {
 	Num int `xorm: comment('Num') index`
 	//博彩公司id
-	CompId   int `xorm:"unique(CompId_MatchId)"`
-	CompName string  `xorm:"varchar(50) index"`
+	CompId int `xorm:"unique(CompId_MatchId)"`
+	//CompNameEN string `xorm:"varchar(50) index"`
+
+	CompName string `xorm:"varchar(50) index"`
 	//比赛id
 	MatchId string `xorm:"unique(CompId_MatchId) varchar(20)"`
 

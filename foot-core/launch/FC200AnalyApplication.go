@@ -25,7 +25,7 @@ func Analy_new(all bool) {
 	base.Log.Info("---------------------------------------------------------------")
 	base.Log.Info("---------------处理结果--------------")
 	base.Log.Info("---------------------------------------------------------------")
-	analyService := new(service.AnalyService)
+	analyService := new(service.MyAnalyService)
 	analyService.ModifyResult()
 	mysql.ShowSQL(all)
 }
@@ -33,6 +33,7 @@ func Analy_new(all bool) {
 func Analy(all bool) {
 	//关闭SQL输出
 	mysql.ShowSQL(showSql)
+
 	base.Log.Info("---------------------------------------------------------------")
 	base.Log.Info("----------------Q1模型-------------------")
 	base.Log.Info("---------------------------------------------------------------")
@@ -40,7 +41,58 @@ func Analy(all bool) {
 	q1.MaxLetBall = maxLetBall
 	q1.PrintOddData = printOddData
 	q1.Analy(all)
-	mysql.ShowSQL(showSql)
+
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------A1模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	a1 := new(service.A1Service)
+	a1.MaxLetBall = maxLetBall
+	a1.PrintOddData = printOddData
+	a1.Analy(all)
+
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------A2模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	a2 := new(service.A2Service)
+	a2.MaxLetBall = maxLetBall
+	a2.PrintOddData = printOddData
+	a2.Analy(all)
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------A3模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	a3 := new(service.A3Service)
+	a3.MaxLetBall = maxLetBall
+	a3.PrintOddData = printOddData
+	a3.Analy(all)
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------C1模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	c1 := new(service.C1Service)
+	c1.MaxLetBall = maxLetBall
+	c1.PrintOddData = printOddData
+	c1.Analy(all)
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------C2模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	c2 := new(service.C2Service)
+	c2.MaxLetBall = maxLetBall
+	c2.PrintOddData = printOddData
+	c2.Analy(all)
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------C3模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	c3 := new(service.C3Service)
+	c3.MaxLetBall = maxLetBall
+	c3.PrintOddData = printOddData
+	c3.Analy(all)
+	base.Log.Info("---------------------------------------------------------------")
+	base.Log.Info("----------------C4模型-------------------")
+	base.Log.Info("---------------------------------------------------------------")
+	c4 := new(service.C4Service)
+	c4.MaxLetBall = maxLetBall
+	c4.PrintOddData = printOddData
+	c4.Analy(all)
+
 	base.Log.Info("---------------------------------------------------------------")
 	base.Log.Info("----------------E3模型-------------------")
 	base.Log.Info("---------------------------------------------------------------")

@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	go My_Spider_timer()
-	go Spider_timer()
+	//go My_Spider_timer()
+	//go Spider_timer()
 
 HEAD:
 	inputReader := bufio.NewReader(os.Stdin)
@@ -33,16 +33,16 @@ HEAD:
 		launch2.GenTable()
 		//launch2.TruncateTable()
 		goto HEAD
-	case "old_spider\n", "old_spider\r\n":
+	case "spider\n", "spider\r\n":
 		launch.Spider()
 		goto HEAD
-	case "spider\n", "spider\r\n":
+	case "new_spider\n", "new_spider\r\n":
 		launch.My_Spider()
 		goto HEAD
-	case "old_analy\n", "old_analy\r\n":
+	case "analy\n", "analy\r\n":
 		launch2.Analy(false)
 		goto HEAD
-	case "analy\n", "analy\r\n":
+	case "new_analy\n", "new_analy\r\n":
 		//launch2.Analy(false)
 		launch2.Analy_new(false)
 		//
@@ -56,7 +56,7 @@ HEAD:
 
 func My_Spider_timer() {
 	fmt.Println(" My_Spider_timer. ")
-	ticker := time.NewTicker(20 * time.Minute)
+	ticker := time.NewTicker(15 * time.Minute)
 	defer ticker.Stop()
 
 	for {
@@ -70,7 +70,7 @@ func My_Spider_timer() {
 
 func Spider_timer() {
 	fmt.Println(" Spider_timer. ")
-	ticker := time.NewTicker(10 * time.Minute)
+	ticker := time.NewTicker(20 * time.Minute)
 	defer ticker.Stop()
 
 	for {

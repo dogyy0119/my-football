@@ -47,7 +47,7 @@ func (this *AsiaHisService) FindByMatchIdCompId(matchId string, compIds ...strin
 SELECT 
   h.* 
 FROM
-  foot.t_asia_his h 
+  t_asia_his h 
 WHERE 1 = 1 
   AND h.MatchId = '` + matchId + `' 
   AND h.SPanKou = 
@@ -58,7 +58,7 @@ WHERE 1 = 1
       h.SPanKou,
       COUNT(1) AS cc 
     FROM
-      foot.t_asia_his h 
+      t_asia_his h 
     WHERE h.MatchId = '` + matchId + `' 
     GROUP BY h.SPanKou) t 
   ORDER BY t.cc DESC 
@@ -71,7 +71,7 @@ WHERE 1 = 1
         h.EPanKou,
         COUNT(1) AS cc 
       FROM
-        foot.t_asia_his h 
+        t_asia_his h 
       WHERE h.MatchId = '` + matchId + `' 
       GROUP BY h.EPanKou) t 
     ORDER BY t.cc DESC 

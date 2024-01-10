@@ -1,12 +1,12 @@
 module tesou.io/platform/foot-parent/foot-spider
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/andybalholm/brotli v1.0.6
-	github.com/bitly/go-simplejson v0.5.0
-	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
+	github.com/bitly/go-simplejson v0.5.1
 	github.com/hu17889/go_spider v0.0.0-20150809033053-85ede20bf88b
-	golang.org/x/net v0.0.0-20191119073136-fc4aabc6c914
+	//github.com/hu17889/go_spider v0.0.0-20150113074338-ffedfe4e0f3c
+	golang.org/x/net v0.7.0
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/yaml.v2 v2.2.5 // indirect

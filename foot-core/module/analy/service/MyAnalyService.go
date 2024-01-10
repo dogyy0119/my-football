@@ -64,7 +64,7 @@ func (this *MyAnalyService) AnalyTest(thiz MyAnalyInterface) {
 	page.PageSize = pageSize
 	page.CurPage = currentPage
 	matchList := make([]*entity2.MatchLast, 0)
-	err := this.MatchHisService.PageSql("SELECT mh.* FROM foot.t_match_his mh WHERE mh.`MatchDate` > '2023-12-01 00:00:00' AND mh.`MatchDate` < '2024-01-30 00:00:00'", page, &matchList)
+	err := this.MatchHisService.PageSql("SELECT mh.* FROM t_match_his mh WHERE mh.`MatchDate` > '2023-12-01 00:00:00' AND mh.`MatchDate` < '2024-01-30 00:00:00'", page, &matchList)
 	if nil != err {
 		base.Log.Error(err)
 		return
@@ -158,7 +158,7 @@ func (this *MyAnalyService) FindOtherAlFlag(matchId string, alFlag string, preRe
 SELECT 
   ar.* 
 FROM
-  foot.t_analy_result ar 
+  t_analy_result ar 
 WHERE ar.MatchId = ? 
   AND ar.AlFlag != ? 
   AND ar.PreResult != ?
@@ -181,7 +181,7 @@ func (this *MyAnalyService) ModifyAllResult() {
 SELECT 
   ar.* 
 FROM
-  foot.t_analy_result ar 
+  t_analy_result ar 
      `
 	//结果值
 	entitys := make([]*entity5.AnalyNewResult, 0)
@@ -228,7 +228,7 @@ func (this *MyAnalyService) ModifyResult() {
 SELECT 
   ar.* 
 FROM
-  foot.t_analy_result ar 
+  t_analy_result ar 
 WHERE DATE_ADD(ar.MatchDate, INTERVAL 6 HOUR) > NOW()
      `
 	//结果值
@@ -287,9 +287,9 @@ SELECT
   ml.GuestTeamId,
   ar.* 
 FROM
-  foot.t_match_last ml,
-  foot.t_league l,
-  foot.t_analy_result ar 
+  t_match_last ml,
+  t_league l,
+  t_analy_result ar 
 WHERE ml.LeagueId = l.Id 
   AND ml.Id = ar.MatchId 
   AND ar.HitCount >= THitCount
@@ -342,7 +342,7 @@ WHERE ml.id = el.matchid
 func (this *MyAnalyService) DelTovoidData() {
 	//E2 C1 不可删除
 	sql_build := `
-DELETE FROM foot.t_analy_result  WHERE AlFlag IN ("E1","Q1") AND TOVoid IS TRUE
+DELETE FROM t_analy_result  WHERE AlFlag IN ("E1","Q1") AND TOVoid IS TRUE
 	`
 	_, err := mysql.GetEngine().Exec(sql_build)
 	if nil != err {

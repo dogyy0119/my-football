@@ -42,7 +42,7 @@ func (this *MatchHisService) FindBySeason(season string) []*pojo.MatchLast {
 SELECT 
   la.* 
 FROM
-  foot.t_match_his la
+  t_match_his la
 WHERE 1=1
 	`
 	sql_build = sql_build + " AND la.MatchDate >= '" + season + "-01-01 00:00:00' AND la.MatchDate <= '" + season + "-12-31 23:59:59'"

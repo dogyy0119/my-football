@@ -1,6 +1,7 @@
 package launch
 
 import (
+	"fmt"
 	"tesou.io/platform/foot-parent/foot-api/module/match/pojo"
 	"tesou.io/platform/foot-parent/foot-core/common/base/service/mysql"
 	service2 "tesou.io/platform/foot-parent/foot-core/module/match/service"
@@ -23,7 +24,7 @@ func Spider_baseFace(spiderAll bool) {
 	} else {
 		matchLasts = matchLastService.FindNotFinished()
 	}
-
+	fmt.Println("matchLasts.length:", len(matchLasts))
 	processer := proc.GetBaseFaceProcesser()
 	processer.MatchLastList = matchLasts
 	processer.SingleThread = true

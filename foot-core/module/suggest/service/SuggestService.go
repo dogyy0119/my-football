@@ -21,10 +21,9 @@ type SuggestService struct {
 	service2.BFFutureEventService
 }
 
-
 /**
 查询待选池中的比赛
- */
+*/
 func (this *SuggestService) QueryGutsC2E2(param *vo2.SuggStubVO) []*vo2.SuggStubVO {
 	sql := `
 SELECT 
@@ -36,14 +35,14 @@ SELECT
   mh.GuestTeamGoals AS GuestTeamGoal,
   ar.* 
 FROM
-  foot.t_league l,
-  foot.t_match_his mh,
-  foot.t_analy_result ar,
+  t_league l,
+  t_match_his mh,
+  t_analy_result ar,
   (SELECT 
     ar1.MatchId 
   FROM
-    foot.t_analy_result ar1,
-    foot.t_analy_result ar2 
+    t_analy_result ar1,
+    t_analy_result ar2 
   WHERE ar1.MatchId = ar2.MatchId 
     AND ar1.AlFlag = 'E2' 
     AND ar2.AlFlag = 'C2' 
@@ -74,11 +73,9 @@ WHERE mh.LeagueId = l.Id
 	return dataList
 }
 
-
-
 /**
 查询待选池中的比赛
- */
+*/
 func (this *SuggestService) QueryGutsC1E2(param *vo2.SuggStubVO) []*vo2.SuggStubVO {
 	sql := `
 SELECT 
@@ -90,14 +87,14 @@ SELECT
   mh.GuestTeamGoals AS GuestTeamGoal,
   ar.* 
 FROM
-  foot.t_league l,
-  foot.t_match_his mh,
-  foot.t_analy_result ar,
+  t_league l,
+  t_match_his mh,
+  t_analy_result ar,
   (SELECT 
     ar1.MatchId 
   FROM
-    foot.t_analy_result ar1,
-    foot.t_analy_result ar2 
+    t_analy_result ar1,
+    t_analy_result ar2 
   WHERE ar1.MatchId = ar2.MatchId 
     AND ar1.AlFlag = 'E2' 
     AND ar2.AlFlag = 'C1' 
@@ -130,7 +127,7 @@ WHERE mh.LeagueId = l.Id
 
 /**
 查询待选池中的比赛
- */
+*/
 func (this *SuggestService) QueryTbs(param *vo2.SuggStubVO) []*vo2.SuggStubVO {
 	sql := `
 SELECT 
@@ -142,9 +139,9 @@ SELECT
   mh.GuestTeamGoals AS GuestTeamGoal,
   ar.* 
 FROM
-  foot.t_league l,
-  foot.t_match_his mh,
-  foot.t_analy_result ar 
+  t_league l,
+  t_match_his mh,
+  t_analy_result ar 
 WHERE mh.LeagueId = l.Id 
   AND mh.Id = ar.MatchId
 	`
@@ -176,25 +173,25 @@ WHERE mh.LeagueId = l.Id
 }
 
 func (this *SuggestService) Query(param *vo2.SuggStubVO) []*vo2.SuggStubVO {
-//	sql := `
-//SELECT
-//  l.Id AS LeagueId,
-//  l.Name AS LeagueName,
-//  mh.MainTeamId AS MainTeam,
-//  mh.GuestTeamId AS GuestTeam,
-//  mh.MainTeamGoals AS MainTeamGoal,
-//  mh.GuestTeamGoals AS GuestTeamGoal,
-//  ar.*
-//FROM
-//  foot.t_league l,
-//  foot.t_match_his mh,
-//  foot.t_analy_result ar
-//WHERE mh.LeagueId = l.Id
-//  AND mh.Id = ar.MatchId
-//  AND ar.HitCount > 0
-//  AND ar.HitCount >= ar.THitCount
-//  AND ar.TOVoidDesc = ''
-//	`
+	//	sql := `
+	//SELECT
+	//  l.Id AS LeagueId,
+	//  l.Name AS LeagueName,
+	//  mh.MainTeamId AS MainTeam,
+	//  mh.GuestTeamId AS GuestTeam,
+	//  mh.MainTeamGoals AS MainTeamGoal,
+	//  mh.GuestTeamGoals AS GuestTeamGoal,
+	//  ar.*
+	//FROM
+	//  t_league l,
+	//  t_match_his mh,
+	//  t_analy_result ar
+	//WHERE mh.LeagueId = l.Id
+	//  AND mh.Id = ar.MatchId
+	//  AND ar.HitCount > 0
+	//  AND ar.HitCount >= ar.THitCount
+	//  AND ar.TOVoidDesc = ''
+	//	`
 
 	sql := `
 SELECT 
@@ -206,9 +203,9 @@ SELECT
   mh.GuestTeamGoals AS GuestTeamGoal,
   ar.* 
 FROM
-  foot.t_league l,
-  foot.t_match_his mh,
-  foot.t_analy_result ar 
+  t_league l,
+  t_match_his mh,
+  t_analy_result ar 
 WHERE mh.LeagueId = l.Id 
   AND mh.Id = ar.MatchId
   AND ar.TOVoidDesc = ''
@@ -252,9 +249,9 @@ SELECT
   mh.GuestTeamGoals AS GuestTeamGoal,
   ar.* 
 FROM
-  foot.t_league l,
-  foot.t_match_his mh,
-  foot.t_analy_result ar 
+  t_league l,
+  t_match_his mh,
+  t_analy_result ar 
 WHERE mh.LeagueId = l.Id 
   AND mh.Id = ar.MatchId
   AND ar.HitCount > 0 
@@ -388,7 +385,6 @@ WHERE mh.LeagueId = l.Id
 	return dataList
 }
 
-
 func (this *SuggestService) QueryLeisu(param *vo2.SuggStubDetailVO) []*vo2.SuggStubDetailVO {
 	sql := `
 SELECT 
@@ -400,14 +396,14 @@ SELECT
   mh.GuestTeamGoals AS GuestTeamGoal,
   ar.* 
 FROM
-  foot.t_league l,
-  foot.t_match_his mh,
-  foot.t_analy_result ar,
+  t_league l,
+  t_match_his mh,
+  t_analy_result ar,
   (SELECT 
     ar1.MatchId 
   FROM
-    foot.t_analy_result ar1,
-    foot.t_analy_result ar2 
+    t_analy_result ar1,
+    t_analy_result ar2 
   WHERE ar1.MatchId = ar2.MatchId 
     AND ar1.AlFlag = 'E2' 
     AND ar2.AlFlag = 'C1' 
@@ -421,7 +417,7 @@ WHERE mh.LeagueId = l.Id
   (SELECT 
     matchId 
   FROM
-    foot.t_pub p 
+    t_pub p 
   WHERE p.CreateTime > DATE_SUB(NOW(), INTERVAL 2 DAY))
 	`
 	if len(param.BeginDateStr) > 0 {

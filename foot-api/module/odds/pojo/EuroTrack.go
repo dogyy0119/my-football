@@ -4,7 +4,7 @@ import "tesou.io/platform/foot-parent/foot-api/common/base/pojo"
 
 /**
 欧赔历史，变化过程表
- */
+*/
 type EuroTrack struct {
 	/**
 	初盘胜平负赔率
@@ -18,8 +18,7 @@ type EuroTrack struct {
 	//比赛id
 	MatchId string `xorm:"unique(CompId_MatchId_OddDate_Num)  varchar(20)"`
 	//数据时间
-	OddDate string	`xorm:"unique(CompId_MatchId_OddDate_Num) varchar(20)"`
-
+	OddDate string `xorm:"unique(CompId_MatchId_OddDate_Num) varchar(20)"`
 
 	Num int `xorm:"unique(CompId_MatchId_OddDate_Num)"`
 

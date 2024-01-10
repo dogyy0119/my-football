@@ -106,9 +106,9 @@ func (this *MatchLastProcesser) Process(p *page.Page) {
 	match_str = rawText_arr[2]
 	//}
 
-	base.Log.Info("日期:TODAY", "联赛信息:", league_str)
+	//base.Log.Info("日期:TODAY", "联赛信息:", league_str)
 	this.league_process(league_str)
-	base.Log.Info("日期:TODAY", "比赛信息:", match_str)
+	//base.Log.Info("日期:TODAY", "比赛信息:", match_str)
 	this.match_process(match_str)
 
 	//now := time.Now()

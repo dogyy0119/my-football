@@ -63,7 +63,7 @@ func (this *AnalyService) AnalyTest(thiz AnalyInterface) {
 	page.PageSize = pageSize
 	page.CurPage = currentPage
 	matchList := make([]*entity2.MatchLast, 0)
-	err := this.MatchHisService.PageSql("SELECT mh.* FROM foot.t_match_his mh WHERE mh.`MatchDate` > '2020-03-01 00:00:00' AND mh.`MatchDate` < '2020-04-30 00:00:00'", page, &matchList)
+	err := this.MatchHisService.PageSql("SELECT mh.* FROM t_match_his mh WHERE mh.`MatchDate` > '2020-03-01 00:00:00' AND mh.`MatchDate` < '2020-04-30 00:00:00'", page, &matchList)
 	if nil != err {
 		base.Log.Error(err)
 		return
@@ -80,7 +80,7 @@ func (this *AnalyService) Analy(analyAll bool, thiz AnalyInterface) {
 		page.PageSize = pageSize
 		page.CurPage = currentPage
 		matchList = make([]*entity2.MatchLast, 0)
-		err := this.MatchHisService.PageSql("select mh.* from foot.t_match_his mh ", page, &matchList)
+		err := this.MatchHisService.PageSql("select mh.* from t_match_his mh ", page, &matchList)
 		if nil != err {
 			base.Log.Error(err)
 			return
@@ -92,7 +92,7 @@ func (this *AnalyService) Analy(analyAll bool, thiz AnalyInterface) {
 			page.PageSize = pageSize
 			page.CurPage = currentPage
 			matchList = make([]*entity2.MatchLast, 0)
-			err := this.MatchHisService.PageSql("select mh.* from foot.t_match_his mh", page, &matchList)
+			err := this.MatchHisService.PageSql("select mh.* from t_match_his mh", page, &matchList)
 			if nil != err {
 				base.Log.Error(err)
 				continue
@@ -184,7 +184,7 @@ func (this *AnalyService) FindOtherAlFlag(matchId string, alFlag string, preResu
 SELECT 
   ar.* 
 FROM
-  foot.t_analy_result ar 
+  t_analy_result ar 
 WHERE ar.MatchId = ? 
   AND ar.AlFlag != ? 
   AND ar.PreResult != ?
@@ -207,7 +207,7 @@ func (this *AnalyService) ModifyAllResult() {
 SELECT 
   ar.* 
 FROM
-  foot.t_analy_result ar 
+  t_analy_result ar 
      `
 	//结果值
 	entitys := make([]*entity5.AnalyResult, 0)
@@ -254,7 +254,7 @@ func (this *AnalyService) ModifyResult() {
 SELECT 
   ar.* 
 FROM
-  foot.t_analy_result ar 
+  t_analy_result ar 
 WHERE DATE_ADD(ar.MatchDate, INTERVAL 6 HOUR) > NOW()
      `
 	//结果值
@@ -313,9 +313,9 @@ SELECT
   ml.GuestTeamId,
   ar.* 
 FROM
-  foot.t_match_last ml,
-  foot.t_league l,
-  foot.t_analy_result ar 
+  t_match_last ml,
+  t_league l,
+  t_analy_result ar 
 WHERE ml.LeagueId = l.Id 
   AND ml.Id = ar.MatchId 
   AND ar.HitCount >= THitCount
@@ -368,7 +368,7 @@ WHERE ml.id = el.matchid
 func (this *AnalyService) DelTovoidData() {
 	//E2 C1 不可删除
 	sql_build := `
-DELETE FROM foot.t_analy_result  WHERE AlFlag IN ("E1","Q1") AND TOVoid IS TRUE
+DELETE FROM t_analy_result  WHERE AlFlag IN ("E1","Q1") AND TOVoid IS TRUE
 	`
 	_, err := mysql.GetEngine().Exec(sql_build)
 	if nil != err {
@@ -546,8 +546,11 @@ func (this *AnalyService) EuroDirection(e81 *entity3.EuroHis, e616 *entity3.Euro
 2.亚赔是主降还是主升 主降为true
 */
 func (this *AnalyService) AsiaDirectionMulti(matchId string) int {
-	aList := this.AsiaHisService.FindByMatchIdCompId(matchId, "Crown", "明陞", "金宝博", "12bet", "盈禾", "18Bet")
+	//aList := this.AsiaHisService.FindByMatchIdCompId(matchId, "Crown", "明陞", "金宝博", "12bet", "盈禾", "18Bet")
+	aList := this.AsiaHisService.FindByMatchIdCompId(matchId, "3", "17", "23", "12bet", "35", "42")
+
 	if len(aList) < 3 {
+		//base.Log.Info("AsiaDirectionMulti  is less 3 ", matchId)
 		return -1
 	}
 
