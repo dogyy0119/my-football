@@ -2,7 +2,6 @@ package proc
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/hu17889/go_spider/core/common/page"
 	"github.com/hu17889/go_spider/core/pipeline"
 	"github.com/hu17889/go_spider/core/spider"
@@ -57,7 +56,7 @@ func (this *AsiaAllTrackProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMAsiaLastApiDownloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(10).Run()
+			newSpider.SetThreadnum(8).Run()
 
 			processer = GetAsiaAllTrackProcesser()
 			processer.Setup(this)
@@ -80,7 +79,7 @@ func (this *AsiaAllTrackProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMAsiaLastApiDownloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 
@@ -139,12 +138,12 @@ func (this *AsiaAllTrackProcesser) Process(p *page.Page) {
 
 		track_temp_id, track_exists := this.AsiaAllTrackService.Exist(track)
 
-		fmt.Println("liuhang track_exists :", track_exists)
-		fmt.Println("liuhang track.OddDate :", track.OddDate)
-		fmt.Println("liuhang odd NameEn", e.NameEn)
-		fmt.Println("liuhang odd.HomeOdds", odd.HomeOdds)
-		fmt.Println("liuhang odd.DrawOdds", odd.DrawOdds)
-		fmt.Println("liuhang odd.AwayOdds", odd.AwayOdds)
+		//fmt.Println("liuhang track_exists :", track_exists)
+		//fmt.Println("liuhang track.OddDate :", track.OddDate)
+		//fmt.Println("liuhang odd NameEn", e.NameEn)
+		//fmt.Println("liuhang odd.HomeOdds", odd.HomeOdds)
+		//fmt.Println("liuhang odd.DrawOdds", odd.DrawOdds)
+		//fmt.Println("liuhang odd.AwayOdds", odd.AwayOdds)
 
 		if !track_exists {
 			//fmt.Println("liuhang !track_exists OddsId:", track.OddsId)

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"strings"
 	"tesou.io/platform/foot-parent/foot-api/common/base"
 	"tesou.io/platform/foot-parent/foot-api/module/odds/pojo"
@@ -50,7 +49,7 @@ func (this *AsiaAllTrackService) AnalyData(allList []*pojo.AsiaAllTrack) (int, i
 	if _letball > -2 && _letball < 2 {
 
 	} else {
-		fmt.Println("_letball 不在 -2 和 2 之间 matchId:" + allList[0].MatchId)
+		base.Log.Info("_letball 不在 -2 和 2 之间 matchId:" + allList[0].MatchId)
 		return -1, -1
 	}
 	_normal := 0

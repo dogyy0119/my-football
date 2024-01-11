@@ -60,7 +60,7 @@ func (this *EuroTrackProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMWin007Downloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(10).Run()
+			newSpider.SetThreadnum(8).Run()
 
 			processer = GetEuroTrackProcesser()
 			processer.Setup(this)
@@ -84,7 +84,7 @@ func (this *EuroTrackProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(3).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 
@@ -219,6 +219,8 @@ func (this *EuroTrackProcesser) track_process(track_list []*entity3.EuroTrack) {
 		this.EuroHisService.Save(his)
 	}
 
+	track_list = removeDuplicates(track_list)
+
 	//将历史赔率入库
 	track_list_slice := make([]interface{}, 0)
 	for _, v := range track_list {
@@ -227,7 +229,22 @@ func (this *EuroTrackProcesser) track_process(track_list []*entity3.EuroTrack) {
 			track_list_slice = append(track_list_slice, v)
 		}
 	}
+
 	this.EuroTrackService.SaveList(track_list_slice)
+}
+
+func removeDuplicates(elements []*entity3.EuroTrack) []*entity3.EuroTrack {
+	encountered := map[*entity3.EuroTrack]struct{}{}
+	result := []*entity3.EuroTrack{}
+
+	for v := range elements {
+		if _, ok := encountered[elements[v]]; !ok {
+			encountered[elements[v]] = struct{}{}
+			result = append(result, elements[v])
+		}
+	}
+
+	return result
 }
 
 func (this *EuroTrackProcesser) Finish() {

@@ -37,9 +37,9 @@ type FutureMatches struct {
 	MatchTime  string `json:"matchTime"`
 	LeagueID   int    `json:"leagueId"`
 	LeagueName string `json:"leagueName"`
-	HomeTeamID int    `json:"homeTeamId"`
+	HomeTeamID string `json:"homeTeamId"`
 	HomeTeam   string `json:"homeTeam"`
-	AwayTeamID int    `json:"awayTeamId"`
+	AwayTeamID string `json:"awayTeamId"`
 	AwayTeam   string `json:"awayTeam"`
 	Separator  int    `json:"seperator"`
 }
@@ -142,7 +142,7 @@ func (this *BaseFaceProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMWin007Downloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(10).Run()
+			newSpider.SetThreadnum(8).Run()
 
 			processer = GetBaseFaceProcesser()
 			processer.Setup(this)
@@ -164,7 +164,7 @@ func (this *BaseFaceProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 
@@ -202,10 +202,11 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				if err := json.Unmarshal([]byte(jsonDataStr), &jsonDataMap); err != nil {
 					panic(err)
 				}
-				if err := ioutil.WriteFile("D:/jsonData.txt", []byte(jsonDataStr), 0644); err != nil {
-					panic(err)
+				if strings.TrimSpace(matchId) != "2512789" {
+					if err := ioutil.WriteFile("D:/jsonData.txt", []byte(jsonDataStr), 0644); err != nil {
+						panic(err)
+					}
 				}
-
 				//积分榜
 				scoreSaveList := make([]interface{}, 0)
 				scoreModifyList := make([]interface{}, 0)
@@ -244,8 +245,6 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				jinSaveList := make([]interface{}, 0)
 				jinModifyList := make([]interface{}, 0)
 				jinListHomeMatches := this.jin_process(matchId, "homeMatches", jsonDataMap)
-				jinListAwayMatches := this.jin_process(matchId, "awayMatches", jsonDataMap)
-				jinListHomeMatches = append(jinListHomeMatches, jinListAwayMatches...)
 				for _, e := range jinListHomeMatches {
 					if len(string(e.ScheduleID)) <= 0 {
 						continue
@@ -258,7 +257,24 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 						jinSaveList = append(jinSaveList, e)
 					}
 				}
+				this.BFJinService.SaveList(jinSaveList)
+				this.BFJinService.ModifyList(jinModifyList)
+				jinSaveList = jinSaveList[:0]
+				jinModifyList = jinModifyList[:0]
 
+				jinListAwayMatches := this.jin_process(matchId, "awayMatches", jsonDataMap)
+				for _, e := range jinListAwayMatches {
+					if len(string(e.ScheduleID)) <= 0 {
+						continue
+					}
+					temp_id, exist := this.BFJinService.Exist(e)
+					if exist {
+						e.Id = temp_id
+						jinModifyList = append(jinModifyList, e)
+					} else {
+						jinSaveList = append(jinSaveList, e)
+					}
+				}
 				this.BFJinService.SaveList(jinSaveList)
 				this.BFJinService.ModifyList(jinModifyList)
 
@@ -266,8 +282,7 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				futureEventSaveList := make([]interface{}, 0)
 				futureEventModifyList := make([]interface{}, 0)
 				futureEventListHomeMatches := this.future_event_process(matchId, "homeMatches", jsonDataMap)
-				futureEventListAwayMatches := this.future_event_process(matchId, "awayMatches", jsonDataMap)
-				futureEventListHomeMatches = append(futureEventListHomeMatches, futureEventListAwayMatches...)
+
 				for _, e := range futureEventListHomeMatches {
 					temp_id, exist := this.BFFutureEventService.Exist(e)
 					if exist {
@@ -279,6 +294,22 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				}
 				this.BFFutureEventService.SaveList(futureEventSaveList)
 				this.BFFutureEventService.ModifyList(futureEventModifyList)
+				futureEventSaveList = futureEventSaveList[:0]
+				futureEventModifyList = futureEventModifyList[:0]
+
+				futureEventListAwayMatches := this.future_event_process(matchId, "awayMatches", jsonDataMap)
+				for _, e := range futureEventListAwayMatches {
+					temp_id, exist := this.BFFutureEventService.Exist(e)
+					if exist {
+						e.Id = temp_id
+						futureEventModifyList = append(futureEventModifyList, e)
+					} else {
+						futureEventSaveList = append(futureEventSaveList, e)
+					}
+				}
+				this.BFFutureEventService.SaveList(futureEventSaveList)
+				this.BFFutureEventService.ModifyList(futureEventModifyList)
+
 			}
 		}
 	})
@@ -291,12 +322,12 @@ func (this *BaseFaceProcesser) score_process(matchId string, jsonDataMap map[str
 	currentPoints := jsonDataMap["currentPoints"].(map[string]interface{})
 	homePointsData, err := json.Marshal(currentPoints["homePoints"])
 	if err != nil {
-		base.Log.Error("转换为JSON出错:", err)
+		base.Log.Error("转换为JSON出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 	var homePoints TeamPoints
 	if err := json.Unmarshal(homePointsData, &homePoints); err != nil {
-		base.Log.Error("解析JSON出错:", err)
+		base.Log.Error("解析JSON出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 	temp := this.parseTeamPointsData(matchId, homePoints)
@@ -304,12 +335,12 @@ func (this *BaseFaceProcesser) score_process(matchId string, jsonDataMap map[str
 	data_list_slice = append(data_list_slice, temp...)
 	awayPointsData, err := json.Marshal(currentPoints["awayPoints"])
 	if err != nil {
-		base.Log.Error("转换为JSON出错:", err)
+		base.Log.Error("转换为JSON出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 	var awayPoints TeamPoints
 	if err := json.Unmarshal(awayPointsData, &awayPoints); err != nil {
-		base.Log.Info("解析JSON出错:", err)
+		base.Log.Info("解析JSON出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 	temp = this.parseTeamPointsData(matchId, awayPoints)
@@ -354,14 +385,14 @@ func (this *BaseFaceProcesser) battle_process(matchId string, jsonDataMap map[st
 	vsMatches := jsonDataMap["vsMatches"].(map[string]interface{})
 	vsMatchesjson, err := json.Marshal(vsMatches)
 	if err != nil {
-		base.Log.Error("JSON化出错:", err)
+		base.Log.Error("JSON化出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 
 	var battledata BattleDataTeam
 	err = json.Unmarshal(vsMatchesjson, &battledata)
 	if err != nil {
-		base.Log.Error(" vsMatchesjson 转换为JSON出错:", err)
+		base.Log.Error(" vsMatchesjson 转换为JSON出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 
@@ -430,20 +461,20 @@ func (this *BaseFaceProcesser) jin_process(matchId string, mainGuess string, jso
 	nearMatches, ok := jsonDataMap["nearMatches"].(map[string]interface{})
 	if ok {
 	} else {
-		base.Log.Error("nearMatches 不是预期的类型")
+		base.Log.Error("nearMatches 不是预期的类型 matchId:", matchId)
 		return data_list_slice
 	}
 
 	homeMatches, ok := nearMatches[mainGuess].(map[string]interface{})
 	if ok {
 	} else {
-		base.Log.Error("homeMatches 不是预期的类型")
+		base.Log.Error("homeMatches 不是预期的类型 matchId:", matchId)
 		return data_list_slice
 	}
 
 	vsMatchesjson, err := json.Marshal(homeMatches)
 	if err != nil {
-		base.Log.Error("JSON化出错:", err)
+		base.Log.Error("JSON化出错: matchId", matchId, " err:", err)
 		return data_list_slice
 	}
 
@@ -453,12 +484,12 @@ func (this *BaseFaceProcesser) jin_process(matchId string, mainGuess string, jso
 
 	for _, v := range jinDataTeam.Matches {
 		temp := new(pojo.BFJin)
-		temp.ScheduleID = int64(v.ID)
+		temp.ScheduleID = v.ID
 
 		matchTime, _ := strconv.ParseInt(v.MatchTime, 10, 64)
 		battleMatchDate := time.Unix(matchTime, 0)
 		temp.MatchTimeStr = battleMatchDate.Format("2006-01-02 15:04:05")
-		temp.SclassID = int64(v.LeagueID)
+		temp.SclassID = v.LeagueID
 		temp.SclassName = v.LeagueName
 		temp.HomeTeam = v.HomeTeam.Name
 		temp.GuestTeam = v.AwayTeam.Name
@@ -533,14 +564,14 @@ func (this *BaseFaceProcesser) future_event_process(matchId string, mainGuess st
 	future3Matches, ok := jsonDataMap["future3Matches"].(map[string]interface{})
 	if ok {
 	} else {
-		base.Log.Info("future3Matches 不是预期的类型")
+		base.Log.Info("future3Matches 不是预期的类型 matchId:", matchId)
 		return data_list_slice
 	}
 
 	homeMatches, ok := future3Matches[mainGuess].(map[string]interface{})
 	if ok {
 	} else {
-		base.Log.Info("mainGuess 不是预期的类型")
+		base.Log.Info("mainGuess 不是预期的类型 matchId:", matchId)
 		return data_list_slice
 	}
 

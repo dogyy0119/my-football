@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	//go My_Spider_timer()
-	//go Spider_timer()
+	go My_Spider_timer()
+	go Spider_timer()
 
 HEAD:
 	inputReader := bufio.NewReader(os.Stdin)

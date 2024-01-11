@@ -55,7 +55,7 @@ func (this *AsiaLastNewProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMAsiaLastApiDownloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(10).Run()
+			newSpider.SetThreadnum(8).Run()
 
 			processer = GetAsiaLastNewProcesser()
 			processer.Setup(this)
@@ -78,7 +78,7 @@ func (this *AsiaLastNewProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMAsiaLastApiDownloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(3).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 

@@ -17,10 +17,17 @@ type MatchLastService struct {
 */
 func (this *MatchLastService) Exist(v *pojo.MatchLast) bool {
 	has, err := mysql.GetEngine().Table("`t_match_last`").Where(" `Id` = ?  ", v.Id).Exist()
+
+	temp := &pojo.MatchLast{MainTeamId: v.MainTeamId, GuestTeamId: v.GuestTeamId, MatchDate: v.MatchDate}
+	//var id string
+	exist, err := mysql.GetEngine().Get(temp)
 	if err != nil {
-		base.Log.Info("Exist", err)
+		base.Log.Error("Exist:", err)
 	}
-	return has
+	if exist || has {
+		return true
+	}
+	return exist
 }
 
 func (this *MatchLastService) FindByMatchId(Id string) []*pojo.MatchLast {

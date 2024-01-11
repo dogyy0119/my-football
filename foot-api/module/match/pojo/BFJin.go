@@ -9,15 +9,15 @@ import (
 */
 type BFJin struct {
 	//比赛ID
-	ScheduleID int64 `json:"ScheduleID" xorm:"comment('比赛ID') unique(ScheduleID) index"`
+	ScheduleID int `json:"ScheduleID" xorm:"comment('比赛ID') unique(ScheduleID) index"`
 	//联赛ID
-	SclassID int64 `json:"SclassID"  xorm:"comment('联赛ID') index"`
+	SclassID int `json:"SclassID"  xorm:"comment('联赛ID') index"`
 	//联赛名称
 	SclassName string `json:"SclassName"  xorm:"comment('联赛名称') index"`
 	//主队ID
-	HomeTeamID int64 `json:"HomeTeamID"  xorm:"comment('主队ID') index"`
+	HomeTeamID int `json:"HomeTeamID"  xorm:"comment('主队ID') index"`
 	//客队ID
-	GuestTeamID    int64 `json:"GuestTeamID"  xorm:"comment('客队ID') index"`
+	GuestTeamID    int    `json:"GuestTeamID"  xorm:"comment('客队ID') index"`
 	HomeTeam       string `json:"HomeTeam"  xorm:"comment('主队') unique(MatchTimeStr_HomeTeam_GuestTeam) index"`
 	GuestTeam      string `json:"GuestTeam"  xorm:"comment('客队') unique(MatchTimeStr_HomeTeam_GuestTeam) index"`
 	MatchState     int    `json:"MatchState"  xorm:"comment('') index"`

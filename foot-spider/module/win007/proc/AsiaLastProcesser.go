@@ -21,7 +21,7 @@ type AsiaLastProcesser struct {
 	service.AsiaLastService
 	service.AsiaHisService
 	//是否是单线程
-	SingleThread bool
+	SingleThread       bool
 	MatchLastList      []*pojo.MatchLast
 	Win007idMatchidMap map[string]string
 }
@@ -50,8 +50,8 @@ func (this *AsiaLastProcesser) Startup() {
 	}
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
-	newSpider.SetSleepTime("rand",100,2000)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetSleepTime("rand", 100, 2000)
+	newSpider.SetThreadnum(8).Run()
 }
 
 func (this *AsiaLastProcesser) Process(p *page.Page) {
@@ -111,7 +111,7 @@ func (this *AsiaLastProcesser) Process(p *page.Page) {
 			}
 		})
 
-		last_temp_id,last_exists := this.AsiaLastService.Exist(last)
+		last_temp_id, last_exists := this.AsiaLastService.Exist(last)
 		if !last_exists {
 			asia_list_slice = append(asia_list_slice, last)
 		} else {

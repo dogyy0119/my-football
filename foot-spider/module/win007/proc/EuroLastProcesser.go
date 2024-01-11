@@ -61,7 +61,7 @@ func (this *EuroLastProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMWin007Downloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(10).Run()
+			newSpider.SetThreadnum(8).Run()
 
 			processer = GetEuroLastProcesser()
 			processer.Setup(this)
@@ -83,7 +83,7 @@ func (this *EuroLastProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(3).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 
@@ -104,7 +104,7 @@ func (this *EuroLastProcesser) Process(p *page.Page) {
 		}
 	})
 	if hdata_str == "" {
-		base.Log.Error("hdata_str:为空,URL:", request.Url)
+		//base.Log.Error("hdata_str:为空,URL:", request.Url)
 		return
 	}
 

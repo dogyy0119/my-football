@@ -11,11 +11,18 @@ type MatchHisService struct {
 }
 
 func (this *MatchHisService) Exist(v *pojo.MatchHis) bool {
+
 	has, err := mysql.GetEngine().Table("`t_match_his`").Where(" `Id` = ?  ", v.Id).Exist()
+
+	temp := &pojo.MatchLast{MainTeamId: v.MainTeamId, GuestTeamId: v.GuestTeamId, MatchDate: v.MatchDate}
+	exist, err := mysql.GetEngine().Get(temp)
 	if err != nil {
-		base.Log.Error("Exist", err)
+		base.Log.Error("Exist:", err)
 	}
-	return has
+	if has || exist {
+		return true
+	}
+	return exist
 }
 
 func (this *MatchHisService) FindAll() []*pojo.MatchHis {

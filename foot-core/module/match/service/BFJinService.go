@@ -24,7 +24,23 @@ func (this *BFJinService) Exist(e *pojo.BFJin) (string, bool) {
 	if exist {
 		id = temp.Id
 	}
+
+	//sql_build1 := strings.Builder{}
+	//sql_build1.WriteString(" ScheduleID = '" + strconv.Itoa(e.ScheduleID) + "'")
+	//exist1, err1 := mysql.GetEngine().Where(sql_build.String()).Get(temp)
+	//if err1 != nil {
+	//	base.Log.Error("Exist:", err1)
+	//}
+	//if exist1 {
+	//	id = temp.Id
+	//}
+	//
+	//if exist || exist1 {
+	//	return id, true
+	//}
+
 	return id, exist
+
 }
 
 func (this *BFJinService) FindByMatchId(matchId string) []*pojo.BFJin {
@@ -37,23 +53,23 @@ func (this *BFJinService) FindByMatchId(matchId string) []*pojo.BFJin {
 	}
 	return dataList
 }
-func (this *BFJinService) FindNearByMatchId(matchId string,count int) []*pojo.BFJin {
+func (this *BFJinService) FindNearByMatchId(matchId string, count int) []*pojo.BFJin {
 	dataList := make([]*pojo.BFJin, 0)
 	sql_build := strings.Builder{}
 	sql_build.WriteString(" ScheduleID = '" + matchId + "'")
-	err := mysql.GetEngine().Where(sql_build.String()).OrderBy("MatchTimeStr DESC").Limit(count,0).Find(&dataList)
+	err := mysql.GetEngine().Where(sql_build.String()).OrderBy("MatchTimeStr DESC").Limit(count, 0).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindByMatchId:", err)
 	}
 	return dataList
 }
 
-func (this *BFJinService) FindNearByTeamName(matchDate time.Time,teamName string,count int) []*pojo.BFJin {
+func (this *BFJinService) FindNearByTeamName(matchDate time.Time, teamName string, count int) []*pojo.BFJin {
 	matchDateStr := matchDate.Format("2006-01-02 15:04:05")
 	dataList := make([]*pojo.BFJin, 0)
 	sql_build := strings.Builder{}
-	sql_build.WriteString("  STR_TO_DATE(MatchTimeStr, '%Y%m%d%H%i%s') < '"+ matchDateStr +"' AND ( HomeTeam = '" + teamName + "' OR  GuestTeam = '" + teamName + "') ")
-	err := mysql.GetEngine().Where(sql_build.String()).OrderBy("MatchTimeStr DESC").Limit(count,0).Find(&dataList)
+	sql_build.WriteString("  STR_TO_DATE(MatchTimeStr, '%Y%m%d%H%i%s') < '" + matchDateStr + "' AND ( HomeTeam = '" + teamName + "' OR  GuestTeam = '" + teamName + "') ")
+	err := mysql.GetEngine().Where(sql_build.String()).OrderBy("MatchTimeStr DESC").Limit(count, 0).Find(&dataList)
 	if err != nil {
 		base.Log.Error("FindNearByTeamName:", err)
 	}

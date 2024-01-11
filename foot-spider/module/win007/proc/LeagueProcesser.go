@@ -44,7 +44,7 @@ func (this *LeagueProcesser) Setup(temp *LeagueProcesser) {
 
 func (this *LeagueProcesser) Startup() {
 	//sid 数据
-	sid_stat_url := "http://m.win007.com/info.htm#section0";
+	sid_stat_url := "http://m.win007.com/info.htm#section0"
 	document, _ := GetDocument(sid_stat_url)
 
 	var processer *LeagueProcesser
@@ -71,14 +71,14 @@ func (this *LeagueProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMWin007Downloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(1).Run()
+			newSpider.SetThreadnum(8).Run()
 		}
 	})
 
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 

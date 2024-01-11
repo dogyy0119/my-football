@@ -36,11 +36,11 @@ type BFFutureEvent struct {
 	/**
 	 * 主队id,
 	 */
-	EventMainTeamId int `xorm:"  comment('主队id') index "`
+	EventMainTeamId string `xorm:"  comment('主队id') index "`
 	/**
 	 * 客队id,
 	 */
-	EventGuestTeamId int `xorm:" comment('客队id') index "`
+	EventGuestTeamId string `xorm:" comment('客队id') index "`
 
 	/**
 	 * 主队名称

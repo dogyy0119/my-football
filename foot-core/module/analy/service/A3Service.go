@@ -78,9 +78,9 @@ func (this *A3Service) analyStub(v *pojo.MatchLast) (int, *entity5.AnalyResult) 
 	preResult := -1
 	//------
 	bfs_arr := this.BFScoreService.FindByMatchId(matchId)
-	base.Log.Info("BFScoreService  matchId: " + matchId)
+	//base.Log.Info("BFScoreService  matchId: " + matchId)
 	if len(bfs_arr) < 1 {
-		base.Log.Info("BFScoreService  less 1 ")
+		//base.Log.Info("BFScoreService  less 1 ")
 		return -1, temp_data
 	}
 
@@ -88,6 +88,7 @@ func (this *A3Service) analyStub(v *pojo.MatchLast) (int, *entity5.AnalyResult) 
 	var mainZhuBfs *pojo.BFScore
 	var guestZongBfs *pojo.BFScore
 	var guestKeBfs *pojo.BFScore
+
 	for _, e := range bfs_arr { //bfs_arr有多语言版本,条数很多
 		if e.TeamId == v.MainTeamId {
 			if e.Type == "总" {
@@ -105,9 +106,14 @@ func (this *A3Service) analyStub(v *pojo.MatchLast) (int, *entity5.AnalyResult) 
 			}
 		}
 	}
+
 	if mainZongBfs == nil || guestZongBfs == nil || mainZhuBfs == nil || guestKeBfs == nil {
 		return -1, temp_data
 	}
+
+	//base.Log.Info("BFScoreService  matchId: " + matchId)
+	//base.Log.Info("mainZongBfs: ", mainZongBfs.MatchId)
+	//base.Log.Info("guestZongBfs: ", guestZongBfs.MatchId)
 
 	//3-主队强 0-客队强
 	mainStrong := -1
@@ -129,6 +135,8 @@ func (this *A3Service) analyStub(v *pojo.MatchLast) (int, *entity5.AnalyResult) 
 	} else {
 		//return -1, temp_data
 	}
+	//base.Log.Info("mainZongBfs: ", mainZongBfs.MatchId)
+	//base.Log.Info("guestZongBfs: ", guestZongBfs.MatchId)
 
 	//------
 	//未来赛事

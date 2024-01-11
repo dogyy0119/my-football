@@ -58,7 +58,7 @@ func (this *MatchLastProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetThreadnum(8).Run()
 }
 
 func (this *MatchLastProcesser) Process(p *page.Page) {
@@ -215,10 +215,11 @@ func (this *MatchLastProcesser) match_process(rawText string) {
 		matchLast := new(pojo.MatchLast)
 		//matchLast.Ext = make(map[string]interface{})
 		//matchLast.Id = bson.NewObjectId().Hex()
-
+		//base.Log.Info(match_arr[i])
 		//match_arr[0] is
 		//1503881^284^0^20180909170000^^町田泽维亚^水户蜀葵^0^0^0^0^0^0^0^0^0.5^181^^0^2^12^^^0^0^0^0
 		match_info_arr := strings.Split(match_arr[i], "^")
+
 		index := 0
 		win007Id := match_info_arr[index]
 		//matchLast.Ext["win007Id"] = win007Id
@@ -235,7 +236,7 @@ func (this *MatchLastProcesser) match_process(rawText string) {
 		index++
 		//主队客队名称
 		index++
-		matchLast.MainTeamId = match_info_arr[index]
+		matchLast.MainTeamName = match_info_arr[index]
 		/*		if regexp.MustCompile("^\\d*$").MatchString(dataDate_or_mainTeamName) {
 					data_date_timestamp, _ := strconv.ParseInt(dataDate_or_mainTeamName, 10, 64)
 					matchLast.DataDate = time.Unix(data_date_timestamp, 0).Format("2006-01-02 15:04:05")
@@ -243,7 +244,7 @@ func (this *MatchLastProcesser) match_process(rawText string) {
 					matchLast.MainTeamId = dataDate_or_mainTeamName
 				}*/
 		index++
-		matchLast.GuestTeamId = match_info_arr[index]
+		matchLast.GuestTeamName = match_info_arr[index]
 		//全场进球
 		index++
 		mainTeamGoals_str := match_info_arr[index]
@@ -262,6 +263,12 @@ func (this *MatchLastProcesser) match_process(rawText string) {
 		guestTeamHalfGoals_str := match_info_arr[index]
 		guestTeamHalfGoals, _ := strconv.Atoi(guestTeamHalfGoals_str)
 		matchLast.GuestTeamHalfGoals = guestTeamHalfGoals
+
+		//base.Log.Info("match_info_arr len: ", len(match_info_arr))
+		//base.Log.Info("match_info_arr HomeID: ", match_info_arr[39])
+		//base.Log.Info("match_info_arr guestID: ", match_info_arr[40])
+		matchLast.MainTeamId = match_info_arr[len(match_info_arr)-2]
+		matchLast.GuestTeamId = match_info_arr[len(match_info_arr)-1]
 		//最后加入数据中
 		this.matchLast_list = append(this.matchLast_list, matchLast)
 	}
@@ -293,6 +300,9 @@ func (this *MatchLastProcesser) Finish() {
 	matchLast_modify_list_slice := make([]interface{}, 0)
 	matchHis_list_slice := make([]interface{}, 0)
 	matchHis_modify_list_slice := make([]interface{}, 0)
+
+	this.matchLast_list = removeDuplicatesElementsMatchLast(this.matchLast_list)
+
 	for _, v := range this.matchLast_list {
 		if nil == v {
 			continue
@@ -310,6 +320,11 @@ func (this *MatchLastProcesser) Finish() {
 		v.Ext = make(map[string]interface{})
 		v.Ext[win007.MODULE_FLAG] = matchExt
 		exists := this.MatchLastService.Exist(v)
+		//if v.Id == "2517059" {
+		//	base.Log.Info(v)
+		//	base.Log.Info(v.Id, " MatchDate: ", v.MatchDate)
+		//}
+
 		if exists {
 			matchLast_modify_list_slice = append(matchLast_modify_list_slice, v)
 		} else {
@@ -330,4 +345,18 @@ func (this *MatchLastProcesser) Finish() {
 	this.MatchHisService.SaveList(matchHis_list_slice)
 	this.MatchHisService.ModifyList(matchHis_modify_list_slice)
 
+}
+
+func removeDuplicatesElementsMatchLast(elements []*pojo.MatchLast) []*pojo.MatchLast {
+	encountered := map[*pojo.MatchLast]struct{}{}
+	result := []*pojo.MatchLast{}
+
+	for v := range elements {
+		if _, ok := encountered[elements[v]]; !ok {
+			encountered[elements[v]] = struct{}{}
+			result = append(result, elements[v])
+		}
+	}
+
+	return result
 }

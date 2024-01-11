@@ -25,7 +25,7 @@ type MatchHisProcesser struct {
 	LeagueSeasonProcesser
 	//是否是单线程
 	SingleThread bool
-	Season string
+	Season       string
 	//比赛数据
 	MatchHis_list []*pojo2.MatchHis
 
@@ -71,7 +71,7 @@ func (this *MatchHisProcesser) Startup() {
 			newSpider.SetDownloader(down.NewMWin007Downloader())
 			newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 			newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-			newSpider.SetThreadnum(10).Run()
+			newSpider.SetThreadnum(8).Run()
 
 			processer = GetMatchHisProcesser()
 			processer.Setup(this)
@@ -95,7 +95,7 @@ func (this *MatchHisProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(1).Run()
+	newSpider.SetThreadnum(8).Run()
 
 }
 
@@ -194,6 +194,8 @@ func (this *MatchHisProcesser) Finish() {
 
 	matchHis_list_slice := make([]interface{}, 0)
 	matchHis_modify_list_slice := make([]interface{}, 0)
+
+	this.MatchHis_list = removeDuplicatesElements(this.MatchHis_list)
 	for _, v := range this.MatchHis_list {
 		if nil == v {
 			continue
@@ -213,4 +215,18 @@ func (this *MatchHisProcesser) Finish() {
 	}
 	this.MatchHisService.SaveList(matchHis_list_slice)
 	this.MatchHisService.ModifyList(matchHis_modify_list_slice)
+}
+
+func removeDuplicatesElements(elements []*pojo2.MatchHis) []*pojo2.MatchHis {
+	encountered := map[*pojo2.MatchHis]struct{}{}
+	result := []*pojo2.MatchHis{}
+
+	for v := range elements {
+		if _, ok := encountered[elements[v]]; !ok {
+			encountered[elements[v]] = struct{}{}
+			result = append(result, elements[v])
+		}
+	}
+
+	return result
 }
