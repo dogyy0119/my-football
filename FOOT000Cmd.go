@@ -63,7 +63,7 @@ func My_Spider_timer() {
 		select {
 		case <-ticker.C:
 			launch.My_Spider()
-
+			launch2.Analy_new(false)
 		}
 	}
 }

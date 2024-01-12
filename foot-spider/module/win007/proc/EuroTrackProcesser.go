@@ -2,12 +2,14 @@ package proc
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hu17889/go_spider/core/common/page"
 	"github.com/hu17889/go_spider/core/pipeline"
 	"github.com/hu17889/go_spider/core/spider"
 	"strconv"
 	"strings"
+	"sync"
 	"tesou.io/platform/foot-parent/foot-api/common/base"
 	"tesou.io/platform/foot-parent/foot-api/module/match/pojo"
 	entity3 "tesou.io/platform/foot-parent/foot-api/module/odds/pojo"
@@ -30,6 +32,8 @@ type EuroTrackProcesser struct {
 	//博彩公司对应的win007id
 	CompWin007Ids      []string
 	Win007idMatchidMap map[string]string
+
+	mu sync.Mutex
 }
 
 func GetEuroTrackProcesser() *EuroTrackProcesser {
@@ -84,7 +88,7 @@ func (this *EuroTrackProcesser) Startup() {
 	newSpider.SetDownloader(down.NewMWin007Downloader())
 	newSpider = newSpider.AddPipeline(pipeline.NewPipelineConsole())
 	newSpider.SetSleepTime("rand", win007.SLEEP_RAND_S, win007.SLEEP_RAND_E)
-	newSpider.SetThreadnum(8).Run()
+	newSpider.SetThreadnum(1).Run()
 
 }
 
@@ -219,7 +223,10 @@ func (this *EuroTrackProcesser) track_process(track_list []*entity3.EuroTrack) {
 		this.EuroHisService.Save(his)
 	}
 
-	track_list = removeDuplicates(track_list)
+	track_list = removeDuplicatesEuroTrack(track_list)
+
+	this.mu.Lock()
+	defer this.mu.Unlock()
 
 	//将历史赔率入库
 	track_list_slice := make([]interface{}, 0)
@@ -233,14 +240,15 @@ func (this *EuroTrackProcesser) track_process(track_list []*entity3.EuroTrack) {
 	this.EuroTrackService.SaveList(track_list_slice)
 }
 
-func removeDuplicates(elements []*entity3.EuroTrack) []*entity3.EuroTrack {
-	encountered := map[*entity3.EuroTrack]struct{}{}
+func removeDuplicatesEuroTrack(elements []*entity3.EuroTrack) []*entity3.EuroTrack {
+	encountered := map[string]struct{}{}
 	result := []*entity3.EuroTrack{}
 
-	for v := range elements {
-		if _, ok := encountered[elements[v]]; !ok {
-			encountered[elements[v]] = struct{}{}
-			result = append(result, elements[v])
+	for _, v := range elements {
+		key := fmt.Sprintf("%d-%d-%d", v.CompId, v.MatchId, v.OddDate, v.Num)
+		if _, ok := encountered[key]; !ok {
+			encountered[key] = struct{}{}
+			result = append(result, v)
 		}
 	}
 

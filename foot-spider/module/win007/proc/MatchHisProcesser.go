@@ -1,6 +1,7 @@
 package proc
 
 import (
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hu17889/go_spider/core/common/page"
 	"github.com/hu17889/go_spider/core/pipeline"
@@ -218,13 +219,14 @@ func (this *MatchHisProcesser) Finish() {
 }
 
 func removeDuplicatesElements(elements []*pojo2.MatchHis) []*pojo2.MatchHis {
-	encountered := map[*pojo2.MatchHis]struct{}{}
+	encountered := map[string]struct{}{}
 	result := []*pojo2.MatchHis{}
 
-	for v := range elements {
-		if _, ok := encountered[elements[v]]; !ok {
-			encountered[elements[v]] = struct{}{}
-			result = append(result, elements[v])
+	for _, v := range elements {
+		key := fmt.Sprintf("%d-%d-%d", v.MatchDate, v.MainTeamId, v.GuestTeamId)
+		if _, ok := encountered[key]; !ok {
+			encountered[key] = struct{}{}
+			result = append(result, v)
 		}
 	}
 

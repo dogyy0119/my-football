@@ -1,6 +1,7 @@
 package proc
 
 import (
+	"fmt"
 	"github.com/hu17889/go_spider/core/common/page"
 	"github.com/hu17889/go_spider/core/pipeline"
 	"github.com/hu17889/go_spider/core/spider"
@@ -348,13 +349,14 @@ func (this *MatchLastProcesser) Finish() {
 }
 
 func removeDuplicatesElementsMatchLast(elements []*pojo.MatchLast) []*pojo.MatchLast {
-	encountered := map[*pojo.MatchLast]struct{}{}
+	encountered := map[string]struct{}{}
 	result := []*pojo.MatchLast{}
 
-	for v := range elements {
-		if _, ok := encountered[elements[v]]; !ok {
-			encountered[elements[v]] = struct{}{}
-			result = append(result, elements[v])
+	for _, v := range elements {
+		key := fmt.Sprintf("%d-%d-%d", v.MatchDate, v.MainTeamId, v.GuestTeamId)
+		if _, ok := encountered[key]; !ok {
+			encountered[key] = struct{}{}
+			result = append(result, v)
 		}
 	}
 

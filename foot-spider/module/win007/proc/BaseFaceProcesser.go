@@ -2,6 +2,7 @@ package proc
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hu17889/go_spider/core/common/page"
 	"github.com/hu17889/go_spider/core/pipeline"
@@ -245,6 +246,7 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				jinSaveList := make([]interface{}, 0)
 				jinModifyList := make([]interface{}, 0)
 				jinListHomeMatches := this.jin_process(matchId, "homeMatches", jsonDataMap)
+				jinListHomeMatches = removeDuplicatesElementsBFJin(jinListHomeMatches)
 				for _, e := range jinListHomeMatches {
 					if len(string(e.ScheduleID)) <= 0 {
 						continue
@@ -263,6 +265,7 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				jinModifyList = jinModifyList[:0]
 
 				jinListAwayMatches := this.jin_process(matchId, "awayMatches", jsonDataMap)
+				jinListAwayMatches = removeDuplicatesElementsBFJin(jinListAwayMatches)
 				for _, e := range jinListAwayMatches {
 					if len(string(e.ScheduleID)) <= 0 {
 						continue
@@ -282,7 +285,7 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				futureEventSaveList := make([]interface{}, 0)
 				futureEventModifyList := make([]interface{}, 0)
 				futureEventListHomeMatches := this.future_event_process(matchId, "homeMatches", jsonDataMap)
-
+				futureEventListHomeMatches = removeDuplicatesElementsBFFutureEvent(futureEventListHomeMatches)
 				for _, e := range futureEventListHomeMatches {
 					temp_id, exist := this.BFFutureEventService.Exist(e)
 					if exist {
@@ -298,6 +301,7 @@ func (this *BaseFaceProcesser) data_process(matchId string, p *page.Page) {
 				futureEventModifyList = futureEventModifyList[:0]
 
 				futureEventListAwayMatches := this.future_event_process(matchId, "awayMatches", jsonDataMap)
+				futureEventListAwayMatches = removeDuplicatesElementsBFFutureEvent(futureEventListAwayMatches)
 				for _, e := range futureEventListAwayMatches {
 					temp_id, exist := this.BFFutureEventService.Exist(e)
 					if exist {
@@ -609,4 +613,34 @@ func (this *BaseFaceProcesser) future_event_process(matchId string, mainGuess st
 func (this *BaseFaceProcesser) Finish() {
 	base.Log.Info("基本面分析抓取解析完成 \r\n")
 
+}
+
+func removeDuplicatesElementsBFJin(elements []*pojo.BFJin) []*pojo.BFJin {
+	encountered := map[string]struct{}{}
+	result := []*pojo.BFJin{}
+
+	for _, v := range elements {
+		key := fmt.Sprintf("%d-%d-%d", v.MatchTimeStr, v.HomeTeam, v.GuestTeam)
+		if _, ok := encountered[key]; !ok {
+			encountered[key] = struct{}{}
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
+
+func removeDuplicatesElementsBFFutureEvent(elements []*pojo.BFFutureEvent) []*pojo.BFFutureEvent {
+	encountered := map[string]struct{}{}
+	result := []*pojo.BFFutureEvent{}
+
+	for _, v := range elements {
+		key := fmt.Sprintf("%d-%d-%d", v.MatchId, v.TeamId, v.EventMatchDate)
+		if _, ok := encountered[key]; !ok {
+			encountered[key] = struct{}{}
+			result = append(result, v)
+		}
+	}
+
+	return result
 }
