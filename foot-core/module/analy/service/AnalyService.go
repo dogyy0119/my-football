@@ -42,6 +42,7 @@ type AnalyService struct {
 	service3.LeagueService
 	//是否打印赔率数据
 	PrintOddData bool
+	PreTimeMatch float64
 }
 
 func (this *AnalyService) Find(matchId string, alFlag string) *entity5.AnalyResult {
@@ -429,7 +430,14 @@ func (this *AnalyService) IsRight2Option(last *entity2.MatchLast, analy *entity5
 
 	//打印数据
 	matchDateStr := last.MatchDate.Format("2006-01-02 15:04:05")
-	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
+	base.Log.Info("比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+
+	now := time.Now()
+	duration := now.Sub(last.MatchDate)
+	if duration.Seconds() < this.PreTimeMatch && duration.Seconds() > 0 {
+		sendmail(analy.Desc)
+	}
 	return resultFlag
 }
 
@@ -467,7 +475,14 @@ func (this *AnalyService) IsRight(last *entity2.MatchLast, analy *entity5.AnalyR
 
 	//打印数据
 	matchDate := last.MatchDate.Format("2006-01-02 15:04:05")
-	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
+	base.Log.Info("比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+
+	now := time.Now()
+	duration := now.Sub(last.MatchDate)
+	if duration.Seconds() < this.PreTimeMatch && duration.Seconds() > 0 {
+		sendmail(analy.Desc)
+	}
 	return resultFlag
 }
 

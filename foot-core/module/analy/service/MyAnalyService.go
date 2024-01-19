@@ -2,7 +2,11 @@ package service
 
 import (
 	"fmt"
+	"github.com/jordan-wright/email"
+	"gopkg.in/gomail.v2"
+	"log"
 	"math"
+	"net/smtp"
 	"strconv"
 	"strings"
 	"tesou.io/platform/foot-parent/foot-api/common/base"
@@ -43,6 +47,8 @@ type MyAnalyService struct {
 	service3.LeagueService
 	//是否打印赔率数据
 	PrintOddData bool
+	// 发送邮件时间
+	PreTimeMatch float64
 }
 
 func (this *MyAnalyService) Find(matchId string, alFlag string) *entity5.AnalyNewResult {
@@ -400,6 +406,13 @@ func (this *MyAnalyService) IsRight2Option(last *entity2.MatchLast, analy *entit
 	matchDateStr := last.MatchDate.Format("2006-01-02 15:04:05")
 	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
 	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamId + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+
+	now := time.Now()
+	duration := now.Sub(last.MatchDate)
+	if duration.Seconds() < this.PreTimeMatch && duration.Seconds() > 0 {
+		sendmail(analy.Desc)
+	}
+
 	return resultFlag
 }
 
@@ -437,7 +450,14 @@ func (this *MyAnalyService) IsRight(last *entity2.MatchLast, analy *entity5.Anal
 
 	//打印数据
 	matchDate := last.MatchDate.Format("2006-01-02 15:04:05")
+	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
 	base.Log.Info("比赛Id:" + last.Id + ",比赛时间:" + matchDate + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamId + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+
+	now := time.Now()
+	duration := now.Sub(last.MatchDate)
+	if duration.Seconds() < this.PreTimeMatch && duration.Seconds() > 0 {
+		sendmail(analy.Desc)
+	}
 	return resultFlag
 }
 
@@ -491,6 +511,13 @@ func (this *MyAnalyService) IsNewRight2Option(last *entity2.MatchLast, analy *en
 	matchDateStr := last.MatchDate.Format("2006-01-02 15:04:05")
 	analy.Desc = "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")"
 	base.Log.Info(analy.AlFlag + "比赛Id:" + last.Id + ",比赛时间:" + matchDateStr + ",联赛:" + league.Name + ",对阵:" + last.MainTeamName + "(" + strconv.FormatFloat(analy.LetBall, 'f', -1, 64) + ")" + last.GuestTeamName + ",预算结果:" + strconv.Itoa(analy.PreResult) + ",已得结果:" + strconv.Itoa(last.MainTeamGoals) + "-" + strconv.Itoa(last.GuestTeamGoals) + " (" + resultFlag + ")")
+
+	now := time.Now()
+	duration := now.Sub(last.MatchDate)
+	if duration.Seconds() < this.PreTimeMatch && duration.Seconds() > 0 {
+		sendmail(analy.Desc)
+	}
+
 	return resultFlag
 }
 
@@ -634,4 +661,50 @@ func (this *MyAnalyService) AsiaDirection(ahis *entity3.AsiaHis) int {
 		}
 	}
 	return mark
+}
+
+func sendmail(body string) {
+
+	m := gomail.NewMessage()
+	//发送人
+	m.SetHeader("From", "499489735@qq.com")
+	//接收人
+	m.SetHeader("To", "499489735@qq.com")
+	//抄送人
+	//m.SetAddressHeader("Cc", "xxx@qq.com", "xiaozhujiao")
+	//主题
+	m.SetHeader("Subject", "比赛提醒")
+	//内容
+	m.SetBody("text/html", body)
+	//附件
+	//m.Attach("./myIpPic.png")
+
+	//拿到token，并进行连接,第4个参数是填授权码
+	d := gomail.NewDialer("smtp.qq.com", 587, "499489735@qq.com", "uwalxsdkwvjvbicd")
+
+	// 发送邮件
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Printf("DialAndSend err %v:", err)
+		panic(err)
+	}
+	fmt.Printf("send mail success\n")
+}
+
+func sendMail(body string) {
+	e := email.NewEmail()
+	//设置发送方的邮箱
+	e.From = "liuhang <499489735@qq.com>"
+	// 设置接收方的邮箱
+	e.To = []string{"499489735@qq.com"}
+	//设置主题
+	e.Subject = "比赛提醒"
+	//设置文件发送的内容
+	e.HTML = []byte(body)
+	//这块是设置附件
+	e.AttachFile("./test.txt")
+	//设置服务器相关的配置
+	err := e.Send("smtp.qq.com:25", smtp.PlainAuth("", "499489735@qq.com", "uwalxsdkwvjvbicd", "smtp.qq.com"))
+	if err != nil {
+		log.Fatal(err)
+	}
 }

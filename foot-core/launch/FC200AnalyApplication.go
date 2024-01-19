@@ -26,6 +26,7 @@ func Analy_new(all bool) {
 	base.Log.Info("---------------处理结果--------------")
 	base.Log.Info("---------------------------------------------------------------")
 	analyService := new(service.MyAnalyService)
+	analyService.PreTimeMatch = 5 * 60
 	analyService.ModifyResult()
 	mysql.ShowSQL(all)
 }
@@ -118,6 +119,7 @@ func Analy(all bool) {
 	base.Log.Info("---------------处理结果--------------")
 	base.Log.Info("---------------------------------------------------------------")
 	analyService := new(service.AnalyService)
+	analyService.PreTimeMatch = 5 * 60
 	analyService.ModifyResult()
 	mysql.ShowSQL(all)
 }
@@ -144,5 +146,6 @@ func Analy_Near() {
 	base.Log.Info("---------------处理结果--------------")
 	base.Log.Info("---------------------------------------------------------------")
 	analyService := new(service.AnalyService)
+	analyService.PreTimeMatch = 5 * 60
 	analyService.ModifyResult()
 }

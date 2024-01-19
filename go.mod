@@ -2,6 +2,8 @@ module tesou.io/platform/foot-parent
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	tesou.io/platform/foot-parent/foot-api v1.0.0
 	tesou.io/platform/foot-parent/foot-core v1.0.0
 	tesou.io/platform/foot-parent/foot-spider v1.0.0
 )
